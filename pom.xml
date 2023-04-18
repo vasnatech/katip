@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.vasnatech</groupId>
+    <artifactId>katip</artifactId>
+    <version>0.1</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>core</module>
+        <module>datation</module>
+        <module>datation-mysql</module>
+    </modules>
+
+    <properties>
+        <jdk.version>17</jdk.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <com.fasterxml.jackson.version>2.12.2</com.fasterxml.jackson.version>
+        <org.junit.jupiter.version>5.8.2</org.junit.jupiter.version>
+        <org.assertj.version>3.23.1</org.assertj.version>
+        <org.mockito.version>4.6.1</org.mockito.version>
+        <com.vasnatech.commons.version>0.1</com.vasnatech.commons.version>
+        <com.vasnatech.datation.version>0.1</com.vasnatech.datation.version>
+    </properties>
+
+    <dependencies>
+    </dependencies>
+</project>

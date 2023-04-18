@@ -1,0 +1,44 @@
+<<--foreach item="table" items="schema.getTables().values()"-->>
+<<--set key="tableName" value="mysql.getTableName(table)"-->>
+<<--if condition="config.isDropTable()"-->>
+DROP TABLE <<--get key="tableName"-->>;
+<<--end-->>
+CREATE TABLE <<--get key="tableName"-->> (
+<<--set key="row" value="1"-->>
+<<--foreach item="column" items="table.getColumns().values()"-->>
+    <<--get key="mysql.getColumnName(column)"-->> <<--get key="mysql.getColumnType(column)"-->> <<--if condition="not(column.isNullable())"-->>NOT <<--end-->>NULL<<--if condition="lt(row,table.getColumns().size())"-->>,<<--end-->>
+
+<<--set key="row" value="add(row,1)"-->>
+<<--end-->>
+<<--if condition="not(table.getPrimaryKey().isEmpty())"-->>
+    ,
+<<--set key="row" value="1"-->>
+    PRIMARY KEY(<<--foreach item="primaryCol" items="table.getPrimaryKey()"-->><<--if condition="gt(row,1)"-->>, <<--end-->><<--get key="mysql.getColumnName(table.getColumns().get(primaryCol))"-->><<--set key="row" value="add(row,1)"-->><<--end-->>)
+<<--end-->>
+) ENGINE=INNODB;
+
+<<--foreach item="index" items="table.getIndexes().values()"-->>
+<<--if condition="index.isReal()"-->>
+<<--set key="row" value="1"-->>
+<<--set key="indexName" value="mysql.getIndexName(index)"-->>
+CREATE <<--if condition="index.isUnique()"-->>UNIQUE <<--end-->>INDEX <<--get key="indexName"-->> ON <<--get key="tableName"-->>
+(<<--foreach item="columnName" items="index.getColumns()"-->><<--get key="mysql.getColumnName(table.getColumns().get(columnName))"-->><<--if condition="lt(row,index.getColumns().size())"-->>, <<--end-->><<--set key="row" value="add(row,1)"-->><<--end-->>);
+<<--end-->>
+<<--end-->>
+
+<<--foreach item="foreignKey" items="table.getForeignKeys().values()"-->>
+<<--if condition="foreignKey.isReal()"-->>
+<<--set key="foreignKeyName" value="mysql.getForeignKeyName(foreignKey)"-->>
+<<--set key="referenceTable" value="schema.getTables().get(foreignKey.getReferenceTable())"-->>
+<<--set key="row" value="1"-->>
+ALTER TABLE <<--get key="tableName"-->> ADD CONSTRAINT <<--get key="foreignKeyName"-->>
+ FOREIGN KEY (<<--foreach item="entry" items="foreignKey.getColumns().entrySet()"-->><<--get key="mysql.getColumnName(table.getColumns().get(entry.getKey()))"-->><<--if condition="lt(row,foreignKey.getColumns().size())"-->>, <<--end-->><<--set key="row" value="add(row,1)"-->><<--end-->>
+) REFERENCES <<--get key="mysql.getTableName(referenceTable)"-->>
+<<--set key="row" value="1"-->>
+(<<--foreach item="entry" items="foreignKey.getColumns().entrySet()"-->><<--get key="mysql.getColumnName(referenceTable.getColumns().get(entry.getValue()))"-->><<--if condition="lt(row,foreignKey.getColumns().size())"-->>, <<--end-->><<--set key="row" value="add(row,1)"-->><<--end-->>
+)
+<<--end-->>
+<<--end-->>
+
+
+<<--end-->>
