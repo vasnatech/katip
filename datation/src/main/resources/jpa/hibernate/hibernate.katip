@@ -1,0 +1,63 @@
+<<--foreach item="schema" items="schemas.getSchemas().values()"-->>
+<<--foreach item="table" items="schema.getTables().values()"-->>
+<<--set key="tableName" value="toUpperCase(toPascalCase(fromSnakeCase(table.getName())))"-->>
+<<--set key="className" value="toPascalCase(fromSnakeCase(table.getName()))"-->>
+<<--file path="concat(replace(package,'.','/'),'/',className,'.java')"-->>
+package <<--get key="package"-->>;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "<<--get key="tableName"-->>")
+public class <<--get key="className"-->> {
+
+<<--foreach item="column" items="table.getColumns().values()"-->>
+<<--set-block key="fieldType"-->><<--include path="'hibernate-field-type.katip'"-->><<==set-block==>>
+<<--if condition="table.getPrimaryKey().contains(column.getName())"-->>
+    @Id
+<<==if==>>
+    @Column(name="<<--get key="toUpperCase(toSnakeCase(fromSnakeCase(column.getName())))"-->>")
+    private <<--get key="fieldType"-->> <<--get key="toCamelCase(fromSnakeCase(column.getName()))"-->>;
+<<==foreach==>>
+
+<<--foreach item="column" items="table.getColumns().values()"-->>
+<<--set-block key="fieldType"-->><<--include path="'hibernate-field-type.katip'"-->><<==set-block==>>
+<<--set key="fieldName" value="toCamelCase(fromSnakeCase(column.getName()))"-->>
+<<--set key="propertyName" value="toPascalCase(fromSnakeCase(column.getName()))"-->>
+    public <<--get key="fieldType"-->> get<<--get key="propertyName"-->>() {
+        return <<--get key="fieldName"-->>;
+    }
+    public void set<<--get key="propertyName"-->>(<<--get key="fieldType"-->> <<--get key="fieldName"-->>) {
+        this.<<--get key="fieldName"-->> = <<--get key="fieldName"-->>;
+    }
+
+<<==foreach==>>
+
+<<--foreach item="column" items="table.getColumns().values()"-->>
+<<--if condition="column.isEnum()"-->>
+<<--set key="enumType" value="concat(toPascalCase(fromSnakeCase(column.getName())),'Type')"-->>
+    public enum <<--get key="enumType"-->> {
+<<--foreach iterator="enumEntryIte" items="column.getEnumValues().entrySet()"-->>
+        <<--get key="toUpperCase(toPascalCase(fromSnakeCase(enumEntryIte.getItem().getKey())))"-->>("<<--get key="enumEntryIte.getItem().getValue()"-->>"),
+<<==foreach==>>
+        ;
+        String value;
+        <<--get key="enumType"-->>(String value) {
+            this.value = value;
+        }
+        public String getValue() {
+            return value;
+        }
+        public static <<--get key="enumType"-->> findByValue(String value) {
+            return Arrays.stream(values()).map(<<--get key="enumType"-->>::getValue).filter(it -> it.equals(value)).findAny().orElse(null);
+        }
+    }
+<<==if==>>
+<<==foreach==>>
+}
+<<==file==>>
+<<==foreach==>>
+<<==foreach==>>

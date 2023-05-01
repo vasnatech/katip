@@ -26,6 +26,6 @@ public class ChainedExpression implements ChainableExpression {
 
     @Override
     public String toString() {
-        return (parentExpression == null ? "" : parentExpression.toString() + ".") + childExpression.toString();
+        return (parentExpression == null ? "" : parentExpression + ".") + childExpression;
     }
 }

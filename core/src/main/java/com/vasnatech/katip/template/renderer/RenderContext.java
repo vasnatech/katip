@@ -1,6 +1,10 @@
 package com.vasnatech.katip.template.renderer;
 
+import com.vasnatech.katip.template.Project;
+
 public interface RenderContext {
+
+    Project project();
 
     Object scope();
 

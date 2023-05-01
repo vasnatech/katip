@@ -1,3 +1,3 @@
-com/vasnatech/katip/datation/GeneratorFactory.class
-com/vasnatech/katip/datation/GeneratorException.class
-com/vasnatech/katip/datation/Generator.class
+com/vasnatech/katip/datation/sql/MySql.class
+com/vasnatech/katip/datation/sql/MySql$1.class
+com/vasnatech/katip/datation/hibernate/Hibernate.class

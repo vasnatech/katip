@@ -1,1 +1,3 @@
+com/vasnatech/katip/datation/sql/MySqlTemplateTest.class
 com/vasnatech/katip/template/parser/DefaultParserTest.class
+com/vasnatech/katip/datation/sql/MySqlGeneratorTest.class

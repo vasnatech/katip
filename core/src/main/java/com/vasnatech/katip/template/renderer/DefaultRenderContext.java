@@ -1,6 +1,7 @@
 package com.vasnatech.katip.template.renderer;
 
 import com.vasnatech.commons.reflection.ReflectionUtil;
+import com.vasnatech.katip.template.Project;
 import com.vasnatech.katip.template.Scope;
 import com.vasnatech.katip.template.expression.function.PureFunction;
 import com.vasnatech.katip.template.expression.function.PureFunctions;
@@ -11,14 +12,21 @@ import java.util.Map;
 
 public class DefaultRenderContext implements RenderContext {
 
+    Project project;
     Scope scope;
 
-    public DefaultRenderContext(Map<String, Object> variables) {
-        this(new Scope(variables));
+    public DefaultRenderContext(Project project, Map<String, Object> variables) {
+        this(project, new Scope(variables));
     }
 
-    DefaultRenderContext(Scope scope) {
+    DefaultRenderContext(Project project, Scope scope) {
+        this.project = project;
         this.scope = scope;
+    }
+
+    @Override
+    public Project project() {
+        return project;
     }
 
     @Override
@@ -92,6 +100,6 @@ public class DefaultRenderContext implements RenderContext {
     }
 
     public RenderContext createSubContext() {
-        return new DefaultRenderContext(new Scope(this.scope));
+        return new DefaultRenderContext(project, new Scope(this.scope));
     }
 }

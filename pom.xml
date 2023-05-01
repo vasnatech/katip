@@ -12,7 +12,7 @@
     <modules>
         <module>core</module>
         <module>datation</module>
-        <module>datation-mysql</module>
+        <module>maven-plugin</module>
     </modules>
 
     <properties>

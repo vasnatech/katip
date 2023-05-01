@@ -2,12 +2,12 @@ package com.vasnatech.katip.template.parser;
 
 import com.vasnatech.commons.text.token.Token;
 import com.vasnatech.commons.text.token.Tokenizer;
-import com.vasnatech.katip.template.Document;
+import com.vasnatech.katip.template.document.Document;
 import com.vasnatech.katip.template.expression.*;
-import com.vasnatech.katip.template.part.Tag;
-import com.vasnatech.katip.template.part.TagRenderer;
-import com.vasnatech.katip.template.part.TagRenderers;
-import com.vasnatech.katip.template.part.Text;
+import com.vasnatech.katip.template.document.Tag;
+import com.vasnatech.katip.template.renderer.TagRenderer;
+import com.vasnatech.katip.template.renderer.TagRenderers;
+import com.vasnatech.katip.template.document.Text;
 
 import java.util.Deque;
 import java.util.Iterator;
@@ -16,11 +16,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class DefaultParser implements Parser {
 
-    enum TagTokenType {Open, Close, LineComment, EndOfLine}
+    enum TagTokenType {Open, Close, EndOpen, EndClose, LineComment, EndOfLine}
 
     enum TagAttributeTokenType {WhiteSpace, Equal, DoubleQuotes}
 
-    enum ExpressionTokenType {WhiteSpace, OpenParenthesis, CloseParenthesis, Dot, Comma}
+    enum ExpressionTokenType {WhiteSpace, OpenParenthesis, CloseParenthesis, Dot, Comma, Quote}
 
     final Tokenizer<TagTokenType> tagTokenizer;
     final Tokenizer<TagAttributeTokenType> tagAttributeTokenizer;
@@ -30,6 +30,8 @@ public class DefaultParser implements Parser {
         tagTokenizer = new Tokenizer<>(
                 new Token<>("<<--", TagTokenType.Open),
                 new Token<>("-->>", TagTokenType.Close),
+                new Token<>("<<==", TagTokenType.EndOpen),
+                new Token<>("==>>", TagTokenType.EndClose),
                 new Token<>("<<//", TagTokenType.LineComment),
                 new Token<>("\r\n", TagTokenType.EndOfLine),
                 new Token<>("\n", TagTokenType.EndOfLine)
@@ -46,6 +48,7 @@ public class DefaultParser implements Parser {
                 new Token<>(")", ExpressionTokenType.CloseParenthesis),
                 new Token<>(".", ExpressionTokenType.Dot),
                 new Token<>(",", ExpressionTokenType.Comma),
+                new Token<>("'", ExpressionTokenType.Quote),
                 new Token<>(" ", ExpressionTokenType.WhiteSpace, false),
                 new Token<>("\t", ExpressionTokenType.WhiteSpace, false),
                 new Token<>("\b", ExpressionTokenType.WhiteSpace, false)
@@ -56,7 +59,7 @@ public class DefaultParser implements Parser {
     public Document parse(CharSequence source) {
         final Iterator<Token<TagTokenType>> iterator = tagTokenizer.tokenize(source);
         final Deque<Tag> containers = new LinkedList<>();
-        containers.offer(new Tag(TagRenderers.get("root")));
+        containers.offer(new Tag(0, TagRenderers.get("root")));
         Token<TagTokenType> previousToken = null;
         Token<TagTokenType> currentToken = null;
         AtomicInteger line = new AtomicInteger(1);
@@ -72,6 +75,8 @@ public class DefaultParser implements Parser {
                 case 0 -> {
                     if (currentToken.getValue() == TagTokenType.Open) {
                         state = 10;
+                    } else if (currentToken.getValue() == TagTokenType.EndOpen) {
+                        state = 15;
                     } else if (currentToken.getValue() == TagTokenType.LineComment) {
                         goNext = false;
                         state = 20;
@@ -87,7 +92,7 @@ public class DefaultParser implements Parser {
                 }
                 case 10 -> {
                     if (currentToken.getValue() != null) {
-                        throw new RuntimeException("Invalid tag at line " + line + ". Expecting tag content found " + currentToken.getMatch());
+                        throw new RuntimeException("Invalid tag at line " + line + ". Expecting tag content but found " + currentToken.getMatch());
                     }
                     state = 11;
                 }
@@ -96,17 +101,30 @@ public class DefaultParser implements Parser {
                         throw new RuntimeException("Invalid tag at line " + line + ". Expecting close token.");
                     }
                     String tagText = previousToken.getMatch().trim();
-                    if ("end".equals(tagText)) {
-                        containers.pop();
-                        if (containers.isEmpty()) {
-                            throw new RuntimeException("Unexpected end tag at line " + line + ".");
-                        }
-                    } else {
-                        Tag tag = parseTag(tagText, line);
-                        containers.peek().addChild(tag);
-                        if (tag.isContainer()) {
-                            containers.push(tag);
-                        }
+                    Tag tag = parseTag(tagText, line);
+                    containers.peek().addChild(tag);
+                    if (tag.isContainer()) {
+                        containers.push(tag);
+                    }
+                    state = 0;
+                }
+                case 15 -> {
+                    if (currentToken.getValue() != null) {
+                        throw new RuntimeException("Invalid tag at line " + line + ". Expecting end of tag but found " + currentToken.getMatch());
+                    }
+                    state = 16;
+                }
+                case 16 -> {
+                    if (currentToken.getValue() != TagTokenType.EndClose) {
+                        throw new RuntimeException("Invalid tag at line " + line + ". Expecting end close token.");
+                    }
+                    String tagText = previousToken.getMatch().trim();
+                    Tag container = containers.pop();
+                    if (!tagText.equals(container.name())) {
+                        throw new RuntimeException("Invalid tag end at line " + line + ". Expecting end of tag " + container.name() + " but found " + tagText);
+                    }
+                    if (containers.isEmpty()) {
+                        throw new RuntimeException("Unexpected end tag at line " + line + ".");
                     }
                     state = 0;
                 }
@@ -114,10 +132,10 @@ public class DefaultParser implements Parser {
                     while (iterator.hasNext()) {
                         if (iterator.next().getValue() == TagTokenType.EndOfLine) {
                             line.incrementAndGet();
-                            state = 0;
                             break;
                         }
                     }
+                    state = 0;
                 }
                 case 30 -> {
                     if (previousToken == null || previousToken.getValue() == null|| previousToken.getValue() == TagTokenType.EndOfLine) {
@@ -138,8 +156,6 @@ public class DefaultParser implements Parser {
             throw new RuntimeException("Unexpected end of document. State: " + state + ".");
         }
 
-        System.out.println("State = " + state);
-
         return new Document(containers.poll());
     }
 
@@ -155,8 +171,9 @@ public class DefaultParser implements Parser {
         if (renderer == null) {
             throw new RuntimeException("Unknown tag renderer " + tagName + " at line " + line + ".");
         }
-        Tag tag = new Tag(renderer);
+        Tag tag = new Tag(line.get(), renderer);
         parseTagAttributes(tag, tagAttributesAsText, line);
+        tag.validate();
         return tag;
     }
 
@@ -246,20 +263,25 @@ public class DefaultParser implements Parser {
                 goNext = true;
                 switch (state) {
                     case 0 -> {
-                        if (currentToken.getValue() != null) {
-                            throw new RuntimeException("Expecting identifier or number but found '" + currentToken.getMatch() + "' at line " + line + ".");
-                        }
-                        Long number = parseLong(currentToken.getMatch());
-                        if (number != null) {
-                            currentExpression = new ConstantExpression(number);
-                            if (iterator.hasNext()) {
-                                state = 11;
-                            } else {
-                                state = 9;
-                            }
+                        if (currentToken.getValue() == ExpressionTokenType.Quote) {
+                            currentExpression = new ConstantExpression("");
+                            state = 15;
                         } else {
-                            goNext = false;
-                            state = 20;
+                            if (currentToken.getValue() != null) {
+                                throw new RuntimeException("Expecting identifier, number or string but found '" + currentToken.getMatch() + "' at line " + line + ".");
+                            }
+                            Long number = parseLong(currentToken.getMatch());
+                            if (number != null) {
+                                currentExpression = new ConstantExpression(number);
+                                if (iterator.hasNext()) {
+                                    state = 11;
+                                } else {
+                                    state = 9;
+                                }
+                            } else {
+                                goNext = false;
+                                state = 20;
+                            }
                         }
                     }
                     case 11 -> { //currentExpression is number
@@ -281,6 +303,18 @@ public class DefaultParser implements Parser {
                         Double decimal = Double.valueOf(constantExpression + "." + number);
                         currentExpression = new ConstantExpression(decimal);
                         state = 9;
+                    }
+                    case 15 -> {//current expression is a string
+                        if (currentToken.getValue() == ExpressionTokenType.Quote) {
+                            previousToken = currentToken;
+                            if (iterator.hasNext())
+                                currentToken = iterator.next();
+                            state = 9;
+                        } else {
+                            ConstantExpression constantExpression = (ConstantExpression) currentExpression;
+                            currentExpression = new ConstantExpression(constantExpression + currentToken.getMatch());
+                            state = 15;
+                        }
                     }
                     case 20 -> {//current token is start of a property or a function
                         if (!isJavaIdentifier(currentToken.getMatch())) {
@@ -362,7 +396,7 @@ public class DefaultParser implements Parser {
                        }
                     }
                     case 32 -> {
-                        if (currentToken.getValue() == null) {
+                        if (currentToken.getValue() == null || currentToken.getValue() == ExpressionTokenType.Quote) {
                             state = 0;
                             goNext = false;
                             Expression expression = parse();

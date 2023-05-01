@@ -4,7 +4,7 @@
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
     <property name="java.vm.version" value="17.0.6+10"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/java-17-openjdk-17.0.6.0.10-1.fc37.x86_64/lib"/>
-    <property name="maven.multiModuleProjectDirectory" value="/home/mfg/workspace/vasnatech/repos/katip/core"/>
+    <property name="maven.multiModuleProjectDirectory" value="/home/mfg/workspace/vasnatech/repos/katip"/>
     <property name="java.vm.vendor" value="Red Hat, Inc."/>
     <property name="java.vendor.url" value="https://www.redhat.com/"/>
     <property name="guice.disable.misplaced.annotation.check" value="true"/>
@@ -13,7 +13,7 @@
     <property name="user.country" value="US"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
-    <property name="user.dir" value="/home/mfg/workspace/vasnatech/repos/katip/core"/>
+    <property name="user.dir" value="/home/mfg/workspace/vasnatech/repos/katip"/>
     <property name="java.vm.compressedOopsMode" value="Zero based"/>
     <property name="java.runtime.version" value="17.0.6+10"/>
     <property name="os.arch" value="amd64"/>
@@ -30,7 +30,7 @@
     <property name="java.class.version" value="61.0"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
-    <property name="os.version" value="6.2.9-200.fc37.x86_64"/>
+    <property name="os.version" value="6.2.10-200.fc37.x86_64"/>
     <property name="library.jansi.path" value="/usr/share/maven/lib/jansi-native"/>
     <property name="user.home" value="/home/mfg"/>
     <property name="user.timezone" value="America/Vancouver"/>

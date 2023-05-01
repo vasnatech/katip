@@ -1,7 +1,7 @@
 package com.vasnatech.katip.template.parser;
 
 import com.vasnatech.commons.text.ReaderCharSequence;
-import com.vasnatech.katip.template.Document;
+import com.vasnatech.katip.template.document.Document;
 
 import java.io.IOException;
 import java.io.InputStream;

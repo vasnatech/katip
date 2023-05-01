@@ -1,9 +1,8 @@
 package com.vasnatech.katip.template.expression;
 
-import com.vasnatech.katip.template.Node;
 import com.vasnatech.katip.template.renderer.RenderContext;
 
-public interface Expression extends Node {
+public interface Expression {
 
     default Object get(RenderContext renderContext) {
         return get(renderContext.scope(), renderContext);

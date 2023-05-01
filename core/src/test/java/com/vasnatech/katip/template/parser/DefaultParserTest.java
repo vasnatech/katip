@@ -3,7 +3,7 @@ package com.vasnatech.katip.template.parser;
 import com.vasnatech.commons.resource.Resources;
 import com.vasnatech.commons.text.token.Token;
 import com.vasnatech.commons.text.token.Tokenizer;
-import com.vasnatech.katip.template.Document;
+import com.vasnatech.katip.template.document.Document;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
