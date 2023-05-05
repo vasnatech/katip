@@ -15,7 +15,7 @@ public class Get extends LeafRenderer {
 
     @Override
     public void validate(Tag tag) throws IOException {
-        validateAllAttributesExists(tag, "key");
+        validateAllAttributesExist(tag, "key");
     }
 
     @Override

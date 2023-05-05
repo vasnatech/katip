@@ -1,4 +1,4 @@
-package com.vasnatech.katip.datation.sql;
+package com.vasnatech.katip.datation.schema;
 
 import com.vasnatech.commons.resource.Resources;
 import com.vasnatech.datation.schema.ddl.DDLSchemas;
@@ -7,8 +7,8 @@ import com.vasnatech.datation.schema.parse.ddl.DDLParserFactory;
 import com.vasnatech.datation.schema.validate.ValidationInfo;
 import com.vasnatech.datation.schema.validate.ddl.DDLValidator;
 import com.vasnatech.datation.schema.validate.ddl.DDLValidatorFactory;
-import com.vasnatech.katip.template.Project;
 import com.vasnatech.katip.template.Output;
+import com.vasnatech.katip.template.Project;
 import com.vasnatech.katip.template.renderer.DocumentRenderer;
 import com.vasnatech.katip.template.renderer.DocumentRendererFactory;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MySqlGeneratorTest {
+public class EntitySchemaGeneratorTest {
 
     @Test
     void generate() throws IOException {
@@ -29,15 +29,19 @@ public class MySqlGeneratorTest {
         List<ValidationInfo> resultList = schemaValidator.validate(schemas);
         assertThat(resultList).isEmpty();
 
-        Project project = Project.from("./sql/mysql", "mysql.katip", "mysql-column.katip");
+        Project project = Project.from("./datation/schema", "entity-schema.katip", "entity-field-type.katip");
 
         DocumentRenderer renderer = DocumentRendererFactory.instance().create(Map.of());
-        try (Output out = new Output("./target/generated-sources/katip/sql-scripts")) {
+        try (Output out = new Output("./target/generated-sources/katip")) {
             renderer.render(
                     project,
-                    project.document("mysql.katip"),
+                    project.document("entity-schema.katip"),
                     out,
-                    Map.of("schemas", schemas)
+                    Map.of(
+                            "schemas", schemas,
+                            "ddlSchema", "ddl-schema.json",
+                            "entitySchema", "entity-schema.json"
+                    )
             );
         }
     }

@@ -26,6 +26,7 @@ public final class TagRenderers {
         register(new Block());
         register(new Include());
 
+        register(new Exe());
         register(new Get());
         register(new Set());
         register(new SetBlock());
@@ -33,5 +34,6 @@ public final class TagRenderers {
         register(new If());
         register(new Unless());
         register(new Foreach());
+        register(new While());
     }
 }

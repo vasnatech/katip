@@ -19,6 +19,10 @@ public final class PureFunctions {
     }
 
     static {
+        register(CreateFunctions.CREATE_SET);
+        register(CreateFunctions.CREATE_LIST);
+        register(CreateFunctions.CREATE_MAP);
+
         register(ArithmeticFunctions.ADD);
         register(ArithmeticFunctions.SUBTRACT);
         register(ArithmeticFunctions.MULTIPLY);
@@ -49,5 +53,7 @@ public final class PureFunctions {
         register(NamingFunctions.FROM_CAMEL_CASE);
 
         register(Join.INSTANCE);
+
+        register(DateTimeFunctions.NOW);
     }
 }

@@ -15,7 +15,7 @@ public class File extends ContainerRenderer {
 
     @Override
     public void validate(Tag tag) throws IOException {
-        validateAllAttributesExists(tag, "path");
+        validateAllAttributesExist(tag, "path");
     }
 
     @Override

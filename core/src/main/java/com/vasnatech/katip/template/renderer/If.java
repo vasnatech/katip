@@ -15,7 +15,7 @@ public class If extends ContainerRenderer {
 
     @Override
     public void validate(Tag tag) throws IOException {
-        validateAllAttributesExists(tag, "condition");
+        validateAllAttributesExist(tag, "condition");
     }
 
     @Override

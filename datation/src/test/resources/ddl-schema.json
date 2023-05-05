@@ -79,15 +79,6 @@
             "length": 250,
             "nullable": false
           },
-          "discriminator": {
-            "type": "char",
-            "length": 4,
-            "enum-values": {
-              "user": "user",
-              "role": "role"
-            },
-            "nullable": false
-          },
           "status": {
             "type": "char",
             "length": 1,
@@ -103,7 +94,7 @@
           "uk_authority": {
             "real": true,
             "unique": true,
-            "columns": ["name", "discriminator"]
+            "columns": ["name"]
           }
         }
       },
@@ -125,6 +116,42 @@
             "reference-table": "authority",
             "columns": {
               "id": "id"
+            }
+          }
+        }
+      },
+      "user_token": {
+        "appends": {
+          "def_id": {
+            "column-anchor": "head"
+          }
+        },
+        "columns": {
+          "user_id": {
+            "type": "char",
+            "length": 32,
+            "nullable": false
+          },
+          "token": {
+            "type": "varchar",
+            "length": 2500,
+            "nullable": false
+          },
+          "created_at": {
+            "type": "timestamp",
+            "nullable": false
+          },
+          "valid_till": {
+            "type": "timestamp",
+            "nullable": false
+          }
+        },
+        "foreign-keys": {
+          "fk_user_token_user": {
+            "real": true,
+            "reference-table": "user",
+            "columns": {
+              "user_id": "id"
             }
           }
         }

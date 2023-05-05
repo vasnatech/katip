@@ -17,7 +17,7 @@ public class Include extends LeafRenderer {
 
     @Override
     public void validate(Tag tag) throws IOException {
-        validateAllAttributesExists(tag, "path");
+        validateAllAttributesExist(tag, "path");
     }
 
     @Override

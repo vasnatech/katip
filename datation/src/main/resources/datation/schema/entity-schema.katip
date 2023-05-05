@@ -1,0 +1,74 @@
+<<--file path="entitySchema"-->>
+{
+  "meta": {
+    "@schema-model": "entity",
+    "@schema-version": "1",
+    "created-by": "mfg",
+    "created-at": "<<--get key="now()"-->>",
+    "updated-by": "mfg",
+    "updated-at": "<<--get key="now()"-->>",
+    "ddl-schema": "<<--get key="ddlSchema"-->>"
+  },
+<<--foreach iterator="schemaIte" items="schemas.getSchemas().values()"-->>
+  "<<--get key="schemaIte.getItem().getName()"-->>": {
+    "entities": {
+<<--foreach iterator="tableIte" items="schemaIte.getItem().getTables().values()"-->>
+<<--set key="className" value="toPascalCase(fromSnakeCase(tableIte.getItem().getName()))"-->>
+      "<<--get key="className"-->>": {
+        "ddl-table": "<<--get key="tableIte.getItem().getName()"-->>",
+        "fields": {
+<<--set key="fieldNames" value="createSet()"-->>
+<<--foreach iterator="columnIte" item="column" items="tableIte.getItem().getColumns().values()"-->>
+<<--set key="fieldName" value="toCamelCase(fromSnakeCase(column.getName()))"-->>
+<<--exe expression="fieldNames.add(fieldName)"-->>
+          "<<--get key="fieldName"-->>": {
+            "ddl-column": "<<--get key="column.getName()"-->>",
+            "type": "<<--include path="'entity-field-type.katip'"-->>",
+<<--if condition="column.isEnum()"-->>
+            "enum-values": {
+<<--foreach iterator="enumEntryIte" items="column.getEnumValues().entrySet()"-->>
+              "<<--get key="enumEntryIte.getItem().getKey()"-->>": "<<--get key="enumEntryIte.getItem().getValue()"-->>"<<--unless condition="enumEntryIte.isLast()"-->>,<<==unless==>>
+
+<<==foreach==>>
+            },
+<<==if==>>
+            "nullable": <<--get key="column.isNullable()"-->>
+
+          }<<--unless condition="columnIte.isLast()"-->>,<<==unless==>>
+
+<<==foreach==>>
+<<--unless condition="tableIte.getItem().getForeignKeys().isEmpty()"-->>
+          ,
+<<--foreach iterator="foreignKeyIte" items="tableIte.getItem().getForeignKeys().values()"-->>
+<<--set key="fieldName" value="toCamelCase(fromSnakeCase(foreignKeyIte.getItem().getReferenceTable()))"-->>
+<<--set key="index" value="0"-->>
+<<--while condition="fieldNames.contains(fieldName)"-->>
+<<--set key="index" value="add(1,index)"-->>
+<<--set key="fieldName" value="concat(toCamelCase(fromSnakeCase(foreignKeyIte.getItem().getReferenceTable())),index)"-->>
+<<==while==>>
+<<--exe expression="fieldNames.add(fieldName)"-->>
+          "<<--get key="fieldName"-->>": {
+            "ddl-foreign-key": "<<--get key="foreignKeyIte.getItem().getName()"-->>",
+            "ddl-table": "<<--get key="foreignKeyIte.getItem().getReferenceTable()"-->>",
+            "ddl-columns": {
+<<--foreach iterator="foreignKeyColumnEntryIte" items="foreignKeyIte.getItem().getColumns().entrySet()"-->>
+              "<<--get key="foreignKeyColumnEntryIte.getItem().getKey()"-->>": "<<--get key="foreignKeyColumnEntryIte.getItem().getValue()"-->>"<<--unless condition="foreignKeyColumnEntryIte.isLast()"-->>,<<==unless==>>
+
+<<==foreach==>>
+            },
+            "fetch": "lazy",
+            "type": "entity",
+            "nullable": false
+          }<<--unless condition="foreignKeyIte.isLast()"-->>,<<==unless==>>
+
+<<==foreach==>>
+<<==unless==>>
+        }
+      }<<--unless condition="tableIte.isLast()"-->>,<<==unless==>>
+
+<<==foreach==>>
+    }
+  }
+<<==foreach==>>
+}
+<<==file==>>

@@ -1,26 +1,26 @@
 package com.vasnatech.katip.template.renderer;
 
 import com.vasnatech.katip.template.Output;
-import com.vasnatech.katip.template.expression.Expression;
 import com.vasnatech.katip.template.document.Tag;
+import com.vasnatech.katip.template.expression.Expression;
 
 import java.io.IOException;
 
-public class Block extends ContainerRenderer {
+public class Exe extends LeafRenderer {
 
     @Override
     public String name() {
-        return "block";
+        return "exe";
     }
 
     @Override
     public void validate(Tag tag) throws IOException {
-        validateAllAttributesExist(tag, "key");
+        validateAllAttributesExist(tag, "expression");
     }
 
     @Override
     public void render(Tag tag, Output output, RenderContext renderContext) throws IOException {
-        Expression keyExpr = tag.attributes().get("key");
-        keyExpr.set(tag, renderContext);
+        Expression expression = tag.attributes().get("expression");
+        expression.get(renderContext);
     }
 }

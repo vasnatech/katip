@@ -20,7 +20,7 @@ public class Foreach extends ContainerRenderer {
 
     @Override
     public void validate(Tag tag) throws IOException {
-        validateAllAttributesExists(tag, "items");
+        validateAllAttributesExist(tag, "items");
         validateOneAttributeExists(tag, "iterator", "item");
     }
 

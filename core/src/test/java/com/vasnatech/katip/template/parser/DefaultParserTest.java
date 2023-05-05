@@ -1,24 +1,12 @@
 package com.vasnatech.katip.template.parser;
 
-import com.vasnatech.commons.resource.Resources;
 import com.vasnatech.commons.text.token.Token;
 import com.vasnatech.commons.text.token.Tokenizer;
-import com.vasnatech.katip.template.document.Document;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.Iterator;
 
 public class DefaultParserTest {
-
-    @Test
-    void parse() throws IOException {
-        DefaultParser parser = new DefaultParser();
-        Document document = parser.parse(Resources.asString(DefaultParserTest.class, "../mysql-template"));
-        System.out.println(document);
-    }
-
-
 
     @Test
     void test() {
