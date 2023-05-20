@@ -17,5 +17,9 @@ public abstract class DocumentRendererFactory {
         DocumentRendererFactory.INSTANCE = factory;
     }
 
+    public DocumentRenderer create() {
+        return create(Map.of());
+    }
+
     public abstract DocumentRenderer create(Map<String, ?> config);
 }

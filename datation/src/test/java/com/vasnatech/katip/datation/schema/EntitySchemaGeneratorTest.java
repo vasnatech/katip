@@ -1,48 +1,58 @@
 package com.vasnatech.katip.datation.schema;
 
 import com.vasnatech.commons.resource.Resources;
-import com.vasnatech.datation.schema.ddl.DDLSchemas;
-import com.vasnatech.datation.schema.parse.ddl.DDLParser;
-import com.vasnatech.datation.schema.parse.ddl.DDLParserFactory;
-import com.vasnatech.datation.schema.validate.ValidationInfo;
-import com.vasnatech.datation.schema.validate.ddl.DDLValidator;
-import com.vasnatech.datation.schema.validate.ddl.DDLValidatorFactory;
-import com.vasnatech.katip.template.Output;
-import com.vasnatech.katip.template.Project;
-import com.vasnatech.katip.template.renderer.DocumentRenderer;
-import com.vasnatech.katip.template.renderer.DocumentRendererFactory;
+import com.vasnatech.datation.Modules;
+import com.vasnatech.datation.SupportedMediaTypes;
+import com.vasnatech.datation.ddl.DDLModule;
+import com.vasnatech.datation.ddl.schema.DDLSchemas;
+import com.vasnatech.datation.entity.EntityModule;
+import com.vasnatech.datation.entity.schema.EntitySchemas;
+import com.vasnatech.datation.load.SchemaLoader;
+import com.vasnatech.datation.load.SchemaLoaderFactories;
+import com.vasnatech.katip.datation.schema.entity.EntitySchemaProjectTemplate;
+import com.vasnatech.katip.template.ProjectTemplates;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.List;
+import java.io.InputStream;
 import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class EntitySchemaGeneratorTest {
 
     @Test
     void generate() throws IOException {
-        DDLParser schemaParser = DDLParserFactory.instance().create();
-        DDLSchemas schemas = schemaParser.parseAndNormalize(Resources.asInputStream("ddl-schema.json"));
-        DDLValidator schemaValidator = DDLValidatorFactory.instance().create();
-        List<ValidationInfo> resultList = schemaValidator.validate(schemas);
-        assertThat(resultList).isEmpty();
+        Modules.add(DDLModule.instance());
+        SchemaLoader schemaLoader = SchemaLoaderFactories.get(SupportedMediaTypes.JSON).create(
+                Map.of(
+                        "normalize", true,
+                        "validate", true
+                )
+        );
+        DDLSchemas ddlSchemas = schemaLoader.load(Resources.asInputStream("ddl-schema.json"));
 
-        Project project = Project.from("./datation/schema", "entity-schema.katip", "entity-field-type.katip");
 
-        DocumentRenderer renderer = DocumentRendererFactory.instance().create(Map.of());
-        try (Output out = new Output("./target/generated-sources/katip")) {
-            renderer.render(
-                    project,
-                    project.document("entity-schema.katip"),
-                    out,
-                    Map.of(
-                            "schemas", schemas,
-                            "ddlSchema", "ddl-schema.json",
-                            "entitySchema", "entity-schema.json"
-                    )
-            );
-        }
+        ProjectTemplates.add(EntitySchemaProjectTemplate.instance());
+        ProjectTemplates.get("schema/entity")
+                .builder()
+                .outputRoot("./target/generated-sources/katip/datation-schemas")
+                .parameter("schemas", ddlSchemas)
+                .parameter("ddlSchema", "ddl-schema.json")
+                .parameter("entitySchema", "entity-schema.json")
+                .run();
+    }
+
+    @Test
+    void parse() throws IOException {
+        Modules.add(EntityModule.instance());
+        SchemaLoader schemaLoader = SchemaLoaderFactories.get(SupportedMediaTypes.JSON).create(
+                Map.of(
+                        "normalize", true,
+                        "validate", true
+                )
+        );
+        InputStream in = Resources.asInputStream("entity-schema.json");
+        EntitySchemas entitySchemas = schemaLoader.load(in);
+        System.out.println(entitySchemas);
+
     }
 }

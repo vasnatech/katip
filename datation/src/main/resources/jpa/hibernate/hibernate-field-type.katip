@@ -1,21 +1,26 @@
-<<--if condition="column.isEnum()"-->><<--get key="toPascalCase(fromSnakeCase(column.getName()))"-->>Type<<==if==>>
-<<--unless condition="column.isEnum()"-->>
-<<--set key="columnTypeName" value="column.getType().name()"-->>
-<<--if condition="eq('CHAR',columnTypeName)"-->><<--if condition="eq(1,column.getLength())"-->><<--if condition="column.isNullable()"-->>Character<<==if==>><<--unless condition="column.isNullable()"-->>char<<==unless==>><<==if==>><<--if condition="lt(1,column.getLength())"-->>String<<==if==>><<==if==>>
-<<--if condition="eq('VARCHAR',columnTypeName)"-->><<--if condition="eq(1,column.getLength())"-->><<--if condition="column.isNullable()"-->>Character<<==if==>><<--unless condition="column.isNullable()"-->>char<<==unless==>><<==if==>><<--if condition="lt(1,column.getLength())"-->>String<<==if==>><<==if==>>
-<<--if condition="eq('BOOL',columnTypeName)"-->><<--if condition="column.isNullable()"-->>Boolean<<==if==>><<--unless condition="column.isNullable()"-->>boolean<<==unless==>><<==if==>>
-<<--if condition="eq('BYTE',columnTypeName)"-->><<--if condition="column.isNullable()"-->>Byte<<==if==>><<--unless condition="column.isNullable()"-->>byte<<==unless==>><<==if==>>
-<<--if condition="eq('INT16',columnTypeName)"-->><<--if condition="column.isNullable()"-->>Short<<==if==>><<--unless condition="column.isNullable()"-->>short<<==unless==>><<==if==>>
-<<--if condition="eq('INT32',columnTypeName)"-->><<--if condition="column.isNullable()"-->>Integer<<==if==>><<--unless condition="column.isNullable()"-->>int<<==unless==>><<==if==>>
-<<--if condition="eq('INT64',columnTypeName)"-->><<--if condition="column.isNullable()"-->>Long<<==if==>><<--unless condition="column.isNullable()"-->>long<<==unless==>><<==if==>>
-<<--if condition="eq('INTEGER',columnTypeName)"-->>java.util.BigInteger<<==if==>>
-<<--if condition="eq('FLOAT',columnTypeName)"-->><<--if condition="column.isNullable()"-->>Float<<==if==>><<--unless condition="column.isNullable()"-->>float<<==unless==>><<==if==>>
-<<--if condition="eq('DOUBLE',columnTypeName)"-->><<--if condition="column.isNullable()"-->>Double<<==if==>><<--unless condition="column.isNullable()"-->>double<<==unless==>><<==if==>>
-<<--if condition="eq('DECIMAL',columnTypeName)"-->>java.uti.BigDecimal<<==if==>>
-<<--if condition="eq('DATE',columnTypeName)"-->>java.time.LocalDate<<==if==>>
-<<--if condition="eq('TIME',columnTypeName)"-->>java.time.LocalTime<<==if==>>
-<<--if condition="eq('DATETIME',columnTypeName)"-->>java.time.LocalDateTime<<==if==>>
-<<--if condition="eq('TIMESTAMP',columnTypeName)"-->>java.time.Instant<<==if==>>
-<<--if condition="eq('BLOB',columnTypeName)"-->>byte[]<<==if==>>
-<<--if condition="eq('CLOB',columnTypeName)"-->>char[]<<==if==>>
+<<--if condition="field.isEnum()"-->><<--get key="toPascalCase(fromCamelCase(field.getName()))"-->>Type<<==if==>>
+<<--unless condition="field.isEnum()"-->>
+<<--set key="fieldTypeName" value="field.getType().name()"-->>
+<<--set key="fieldItemType" value="field.getItemType()"-->>
+<<--if condition="eq('CHARACTER',fieldTypeName)"-->><<--if condition="field.isNullable()"-->>Character<<==if==>><<--unless condition="field.isNullable()"-->>char<<==unless==>><<==if==>>
+<<--if condition="eq('STRING',fieldTypeName)"-->>String<<==if==>>
+<<--if condition="eq('BOOLEAN',fieldTypeName)"-->><<--if condition="field.isNullable()"-->>Boolean<<==if==>><<--unless condition="field.isNullable()"-->>boolean<<==unless==>><<==if==>>
+<<--if condition="eq('BYTE',fieldTypeName)"-->><<--if condition="field.isNullable()"-->>Byte<<==if==>><<--unless condition="field.isNullable()"-->>byte<<==unless==>><<==if==>>
+<<--if condition="eq('INT16',fieldTypeName)"-->><<--if condition="field.isNullable()"-->>Short<<==if==>><<--unless condition="field.isNullable()"-->>short<<==unless==>><<==if==>>
+<<--if condition="eq('INT32',fieldTypeName)"-->><<--if condition="field.isNullable()"-->>Integer<<==if==>><<--unless condition="field.isNullable()"-->>int<<==unless==>><<==if==>>
+<<--if condition="eq('INT64',fieldTypeName)"-->><<--if condition="field.isNullable()"-->>Long<<==if==>><<--unless condition="field.isNullable()"-->>long<<==unless==>><<==if==>>
+<<--if condition="eq('INTEGER',fieldTypeName)"-->>java.util.BigInteger<<==if==>>
+<<--if condition="eq('FLOAT',fieldTypeName)"-->><<--if condition="field.isNullable()"-->>Float<<==if==>><<--unless condition="field.isNullable()"-->>float<<==unless==>><<==if==>>
+<<--if condition="eq('DOUBLE',fieldTypeName)"-->><<--if condition="field.isNullable()"-->>Double<<==if==>><<--unless condition="field.isNullable()"-->>double<<==unless==>><<==if==>>
+<<--if condition="eq('DECIMAL',fieldTypeName)"-->>java.uti.BigDecimal<<==if==>>
+<<--if condition="eq('DATE',fieldTypeName)"-->>java.time.LocalDate<<==if==>>
+<<--if condition="eq('TIME',fieldTypeName)"-->>java.time.LocalTime<<==if==>>
+<<--if condition="eq('DATETIME',fieldTypeName)"-->>java.time.LocalDateTime<<==if==>>
+<<--if condition="eq('INSTANT',fieldTypeName)"-->>java.time.Instant<<==if==>>
+<<--if condition="eq('BYTE_ARRAY',fieldTypeName)"-->>byte[]<<==if==>>
+<<--if condition="eq('CHAR_ARRAY',fieldTypeName)"-->>char[]<<==if==>>
+<<--if condition="eq('LIST',fieldTypeName)"-->>java.util.List<<<--get key="fieldItemType"-->>><<==if==>>
+<<--if condition="eq('SET',fieldTypeName)"-->>java.util.Set<<<--get key="fieldItemType"-->>><<==if==>>
+<<--if condition="eq('COLLECTION',fieldTypeName)"-->>java.util.Collection<<<--get key="fieldItemType"-->>><<==if==>>
+<<--if condition="eq('ENTITY',fieldTypeName)"-->><<--get key="fieldItemType"-->><<==if==>>
 <<==unless==>>

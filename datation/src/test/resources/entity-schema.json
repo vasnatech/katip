@@ -1,0 +1,285 @@
+{
+  "meta": {
+    "@schema-type": "entity",
+    "@schema-version": "1",
+    "created-by": "mfg",
+    "created-at": "2023-05-11T18:04:26.458650084Z",
+    "updated-by": "mfg",
+    "updated-at": "2023-05-11T18:04:26.461636370Z",
+    "ddl-schema": "ddl-schema.json"
+  },
+  "sec": {
+    "ddl": {
+      "schema": "sec"
+    },
+    "definitions": {
+      "defId": {
+        "ids": ["id"],
+        "fields": {
+          "id": {
+            "ddl": {
+              "column": "id"
+            },
+            "type": "string",
+            "nullable": false
+          }
+        }
+      },
+      "defUserAndTime": {
+        "fields": {
+          "createdBy": {
+            "ddl": {
+              "column": "created_by"
+            },
+            "type": "string",
+            "nullable": false
+          },
+          "creator": {
+            "ddl": {
+              "relation": "many-to-one",
+              "table": "user",
+              "columns": {"created_by": "id"}
+            },
+            "fetch": "lazy",
+            "type": "entity",
+            "item-type": "User"
+          },
+          "createdAt": {
+            "ddl": {
+              "column": "created_at"
+            },
+            "type": "instant",
+            "nullable": false
+          },
+          "updatedBy": {
+            "ddl": {
+              "column": "updated_by"
+            },
+            "type": "string",
+            "nullable": false
+          },
+          "updater": {
+            "ddl": {
+              "relation": "many-to-one",
+              "table": "user",
+              "columns": {"updated_by": "id"}
+            },
+            "fetch": "lazy",
+            "type": "entity",
+            "item-type": "User"
+          },
+          "updatedAt": {
+            "ddl": {
+              "column": "updated_at"
+            },
+            "type": "instant",
+            "nullable": false
+          }
+        }
+      }
+    },
+    "entities": {
+      "Authority": {
+        "ddl": {
+          "table": "authority"
+        },
+        "appends": {
+          "defId": {
+            "anchor": "head"
+          },
+          "defUserAndTime": {
+            "anchor": "tail"
+          }
+        },
+        "fields": {
+          "name": {
+            "ddl": {
+              "column": "name"
+            },
+            "type": "string",
+            "nullable": false
+          },
+          "status": {
+            "ddl": {
+              "column": "status"
+            },
+            "type": "character",
+            "enum-values": {
+              "active": "A",
+              "inactive": "X",
+              "pending": "P"
+            },
+            "nullable": false
+          },
+          "privileges": {
+            "ddl": {
+              "relation": "many-to-many",
+              "table": "authority_privilege",
+              "columns": {"id": "authority_id"},
+              "inverse-table": "privilege",
+              "inverse-columns": {"id": "privilege_id"}
+            },
+            "fetch": "lazy",
+            "type": "set",
+            "item-type": "Privilege"
+          }
+        }
+      },
+      "User": {
+        "ddl": {
+          "table": "user"
+        },
+        "appends": {
+          "defId": {
+            "anchor": "head"
+          }
+        },
+        "inherits": {
+          "base": "Authority",
+          "ddl": {
+            "relation": "one-to-one",
+            "table": "authority",
+            "columns": {"id": "id"}
+          }
+        },
+        "fields": {
+          "email": {
+            "ddl": {
+              "column": "email"
+            },
+            "type": "string",
+            "nullable": true
+          },
+          "tokens": {
+            "ddl": {
+              "relation": "one-to-many",
+              "table": "user_token",
+              "columns": {"id": "user_id"}
+            },
+            "fetch": "lazy",
+            "type": "set",
+            "item-type": "UserToken"
+          }
+        }
+      },
+      "UserToken": {
+        "ddl": {
+          "table": "user_token"
+        },
+        "appends": {
+          "defId": {
+            "anchor": "head"
+          }
+        },
+        "fields": {
+          "userId": {
+            "ddl": {
+              "column": "user_id"
+            },
+            "type": "string",
+            "nullable": false
+          },
+          "user": {
+            "ddl": {
+              "relation": "many-to-one",
+              "table": "user",
+              "columns": {"user_id": "id"}
+            },
+            "fetch": "lazy",
+            "type": "entity",
+            "item-type": "User"
+          },
+          "token": {
+            "ddl": {
+              "column": "token"
+            },
+            "type": "string",
+            "nullable": false
+          },
+          "createdAt": {
+            "ddl": {
+              "column": "created_at"
+            },
+            "type": "instant",
+            "nullable": false
+          },
+          "validTill": {
+            "ddl": {
+              "column": "valid_till"
+            },
+            "type": "instant",
+            "nullable": false
+          }
+        }
+      },
+      "Role": {
+        "ddl": {
+          "table": "role"
+        },
+        "appends": {
+          "defId": {
+            "anchor": "head"
+          }
+        },
+        "inherits": {
+          "base": "Authority",
+          "ddl": {
+            "relation": "one-to-one",
+            "table": "authority",
+            "columns": {"id": "id"}
+          }
+        },
+        "fields": {
+          "info": {
+            "ddl": {
+              "column": "info"
+            },
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Privilege": {
+        "ddl": {
+          "table": "privilege"
+        },
+        "appends": {
+          "defId": {
+            "anchor": "head"
+          },
+          "defUserAndTime": {
+            "anchor": "tail"
+          }
+        },
+        "fields": {
+          "name": {
+            "ddl": {
+              "column": "name"
+            },
+            "type": "string",
+            "nullable": true
+          },
+          "info": {
+            "ddl": {
+              "column": "info"
+            },
+            "type": "string",
+            "nullable": true
+          },
+          "authorities": {
+            "ddl": {
+              "relation": "many-to-many",
+              "table": "authority_privilege",
+              "columns": {"id": "privilege_id"},
+              "inverse-table": "authority",
+              "inverse-columns": {"id": "authority_id"}
+            },
+            "fetch": "lazy",
+            "type": "set",
+            "item-type": "Authority"
+          }
+        }
+      }
+    }
+  }
+}

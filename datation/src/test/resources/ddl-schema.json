@@ -1,6 +1,6 @@
 {
   "meta": {
-    "@schema-model": "database",
+    "@schema-type": "ddl",
     "@schema-version": "1",
     "created-by": "mfg",
     "created-at": "2022-06-03T22:12:00.000Z",
@@ -39,22 +39,6 @@
             "type": "timestamp",
             "nullable": false
           }
-        },
-        "foreign-keys": {
-          "fk_created_by": {
-            "real": false,
-            "reference-table": "user",
-            "columns": {
-              "created_by": "id"
-            }
-          },
-          "fk_updated_by": {
-            "real": false,
-            "reference-table": "user",
-            "columns": {
-              "updated_by": "id"
-            }
-          }
         }
       }
     },
@@ -62,10 +46,10 @@
       "authority": {
         "appends": {
           "def_id": {
-            "column-anchor": "head"
+            "anchor": "head"
           },
           "def_user_and_time": {
-            "column-anchor": "tail"
+            "anchor": "tail"
           }
         },
         "columns": {
@@ -101,7 +85,7 @@
       "user": {
         "appends": {
           "def_id": {
-            "column-anchor": "head"
+            "anchor": "head"
           }
         },
         "columns": {
@@ -123,7 +107,7 @@
       "user_token": {
         "appends": {
           "def_id": {
-            "column-anchor": "head"
+            "anchor": "head"
           }
         },
         "columns": {
@@ -159,7 +143,7 @@
       "role": {
         "appends": {
           "def_id": {
-            "column-anchor": "head"
+            "anchor": "head"
           }
         },
         "columns": {
@@ -181,10 +165,10 @@
       "privilege": {
         "appends": {
           "def_id": {
-            "column-anchor": "head"
+            "anchor": "head"
           },
           "def_user_and_time": {
-            "column-anchor": "tail"
+            "anchor": "tail"
           }
         },
         "columns": {

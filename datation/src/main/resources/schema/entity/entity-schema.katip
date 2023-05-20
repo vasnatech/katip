@@ -1,0 +1,121 @@
+<<--file path="entitySchema"-->>
+{
+  "meta": {
+    "@schema-type": "entity",
+    "@schema-version": "1",
+    "created-by": "mfg",
+    "created-at": "<<--get key="now()"-->>",
+    "updated-by": "mfg",
+    "updated-at": "<<--get key="now()"-->>",
+    "ddl-schema": "<<--get key="ddlSchema"-->>"
+  },
+<<--foreach iterator="schemaIte" items="schemas.getSchemas().values()"-->>
+  "<<--get key="schemaIte.getItem().getName()"-->>": {
+    "ddl": {
+      "schema": "<<--get key="schemaIte.getItem().getName()"-->>"
+    },
+    "entities": {
+<<--foreach iterator="tableIte" items="schemaIte.getItem().getTables().values()"-->>
+<<--set key="className" value="toPascalCase(fromSnakeCase(tableIte.getItem().getName()))"-->>
+      "<<--get key="className"-->>": {
+        "ddl": {
+          "table": "<<--get key="tableIte.getItem().getName()"-->>"
+        },
+<<--unless condition="tableIte.getItem().getPrimaryKey().isEmpty()"-->>
+        "ids": [<<--foreach iterator="primaryKeyColumnIte" items="tableIte.getItem().getPrimaryKey()"-->>"<<--get key="primaryKeyColumnIte.getItem()"-->>"<<--unless condition="primaryKeyColumnIte.isLast()"-->>, <<==unless==>><<==foreach==>>],
+<<==unless==>>
+        "fields": {
+<<--set key="fieldNames" value="createSet()"-->>
+<<--set key="fieldComma" value="false"-->>
+<<--foreach item="column" items="tableIte.getItem().getColumns().values()"-->>
+<<--set key="fieldName" value="toCamelCase(fromSnakeCase(column.getName()))"-->>
+<<--exe expression="fieldNames.add(fieldName)"-->>
+<<--if condition="fieldComma"-->>
+,
+<<==if==>>
+<<--set key="fieldComma" value="true"-->>
+          "<<--get key="fieldName"-->>": {
+            "ddl": {
+              "column": "<<--get key="column.getName()"-->>"
+            },
+            "type": "<<--include path="'entity-field-type.katip'"-->>",
+<<--if condition="column.isEnum()"-->>
+            "enum-values": {
+<<--foreach iterator="enumEntryIte" items="column.getEnumValues().entrySet()"-->>
+              "<<--get key="enumEntryIte.getItem().getKey()"-->>": "<<--get key="enumEntryIte.getItem().getValue()"-->>"<<--unless condition="enumEntryIte.isLast()"-->>,<<==unless==>>
+
+<<==foreach==>>
+            },
+<<==if==>>
+            "nullable": <<--get key="column.isNullable()"-->> 
+          }<<//
+<<==foreach==>>
+<<--unless condition="tableIte.getItem().getForeignKeys().isEmpty()"-->>
+<<--foreach iterator="foreignKeyIte" items="tableIte.getItem().getForeignKeys().values()"-->>
+<<--set key="fieldName" value="''"-->>
+<<--set key="oneToOne" value="true"-->>
+<<--foreach iterator="foreignKeyColumnEntryIte" items="foreignKeyIte.getItem().getColumns().entrySet()"-->>
+<<--unless condition="foreignKeyColumnEntryIte.isFirst()"-->><<--set key="fieldName" value="concat(fieldName,'_')"-->><<==unless==>>
+<<--set key="fieldName" value="concat(fieldName,foreignKeyColumnEntryIte.getItem().getKey())"-->>
+<<--set key="oneToOne" value="and(oneToOne,tableIte.getItem().getPrimaryKey().contains(foreignKeyColumnEntryIte.getItem().getKey()))"-->>
+<<==foreach==>>
+<<--set key="fieldName" value="concat(fieldName,'_',foreignKeyIte.getItem().getReferenceTable())"-->>
+<<--set key="fieldName" value="toCamelCase(fromSnakeCase(fieldName))"-->>
+<<--exe expression="fieldNames.add(fieldName)"-->>
+,
+          "<<--get key="fieldName"-->>": {
+            "ddl": {
+              "relation": "<<--if condition="oneToOne"-->>one-to-one<<==if==>><<--unless condition="oneToOne"-->>many-to-one<<==unless==>>",
+              "table": "<<--get key="foreignKeyIte.getItem().getReferenceTable()"-->>",
+              "columns": {<<//
+<<--foreach iterator="foreignKeyColumnEntryIte" items="foreignKeyIte.getItem().getColumns().entrySet()"-->>
+"<<--get key="foreignKeyColumnEntryIte.getItem().getKey()"-->>": "<<--get key="foreignKeyColumnEntryIte.getItem().getValue()"-->>"<<--unless condition="foreignKeyColumnEntryIte.isLast()"-->>, <<==unless==>>
+<<==foreach==>>
+}
+            },
+            "fetch": "lazy",
+            "type": "entity",
+            "item-type": "<<--get key="toPascalCase(fromSnakeCase(foreignKeyIte.getItem().getReferenceTable()))"-->>"
+          }<<//
+
+<<==foreach==>>
+<<==unless==>>
+<<--foreach item="otherTable" items="schemaIte.getItem().getTables().values()"-->>
+<<--foreach iterator="foreignKeyIte" items="otherTable.getForeignKeys().values()"-->>
+<<--if condition="eq(tableIte.getItem().getName(),foreignKeyIte.getItem().getReferenceTable()"-->>
+<<--set key="fieldName" value="''"-->>
+<<--foreach iterator="foreignKeyColumnEntryIte" items="foreignKeyIte.getItem().getColumns().entrySet()"-->>
+<<--unless condition="foreignKeyColumnEntryIte.isFirst()"-->><<--set key="fieldName" value="concat(fieldName,'_')"-->><<==unless==>>
+<<--set key="fieldName" value="concat(fieldName,foreignKeyColumnEntryIte.getItem().getKey())"-->>
+<<==foreach==>>
+<<--set key="fieldName" value="concat(fieldName,'_',otherTable.getName(),'_list')"-->>
+<<--set key="fieldName" value="toCamelCase(fromSnakeCase(fieldName))"-->>
+<<--exe expression="fieldNames.add(fieldName)"-->>
+,
+          "<<--get key="fieldName"-->>": {
+            "ddl": {
+              "relation": "one-to-many",
+              "table": "<<--get key="otherTable.getName()"-->>",
+              "columns": {<<//
+<<--foreach iterator="foreignKeyColumnEntryIte" items="foreignKeyIte.getItem().getColumns().entrySet()"-->>
+"<<--get key="foreignKeyColumnEntryIte.getItem().getValue()"-->>": "<<--get key="foreignKeyColumnEntryIte.getItem().getKey()"-->>"<<--unless condition="foreignKeyColumnEntryIte.isLast()"-->>, <<==unless==>>
+<<==foreach==>>
+}
+            },
+            "fetch": "lazy",
+            "type": "list",
+            "item-type": "<<--get key="toPascalCase(fromSnakeCase(otherTable.getName()))"-->>"
+          }<<//
+<<==if==>>
+<<==foreach==>>
+<<==foreach==>>
+
+        }
+      }<<--unless condition="tableIte.isLast()"-->>,<<==unless==>>
+
+<<==foreach==>>
+    }
+  }
+<<==foreach==>>
+}
+<<==file==>>

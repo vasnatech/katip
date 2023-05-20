@@ -1,7 +1,10 @@
 package com.vasnatech.katip.template.expression.function;
 
 import com.vasnatech.katip.template.expression.Name;
+import org.apache.commons.lang3.LocaleUtils;
 
+import java.util.Locale;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public interface NamingFunctions {
@@ -37,15 +40,16 @@ public interface NamingFunctions {
 
 
     class NameToString extends AbstractPureFunction {
-        Function<Name, String> function;
+        BiFunction<Name, Locale, String> function;
 
-        NameToString(String name, Function<Name, String> function) {
-            super(name, 1, 1);
+        NameToString(String name, BiFunction<Name, Locale, String> function) {
+            super(name, 1, 2);
             this.function = function;
         }
         @Override
         public Object invoke(Object[] params) {
-            return function.apply((Name)params[0]);
+            Locale locale = params.length > 1 ? LocaleUtils.toLocale(params[1].toString()) : Locale.ENGLISH;
+            return function.apply((Name)params[0], locale);
         }
         @Override
         public Class<?> returnType() {
@@ -53,7 +57,11 @@ public interface NamingFunctions {
         }
         @Override
         public Class<?> parameterType(int index) {
-            return Name.class;
+            return switch (index) {
+                case 0 -> Name.class;
+                case 1 -> String.class;
+                default -> Object.class;
+            };
         }
     }
 }

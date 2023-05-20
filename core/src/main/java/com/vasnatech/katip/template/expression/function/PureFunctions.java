@@ -19,6 +19,9 @@ public final class PureFunctions {
     }
 
     static {
+        register(ObjectFunctions.IS_PRESENT);
+        register(ObjectFunctions.IS_NOT_PRESENT);
+
         register(CreateFunctions.CREATE_SET);
         register(CreateFunctions.CREATE_LIST);
         register(CreateFunctions.CREATE_MAP);
@@ -38,10 +41,15 @@ public final class PureFunctions {
         register(ComparisonFunctions.GREATER_THAN);
         register(ComparisonFunctions.LESS_THAN);
 
+        register(StringFunctions.IS_EMPTY);
+        register(StringFunctions.IS_NOT_EMPTY);
         register(StringFunctions.TO_UPPER_CASE);
         register(StringFunctions.TO_LOWER_CASE);
         register(StringFunctions.CONCAT);
         register(StringFunctions.REPLACE);
+
+        register(CollectionFunctions.FIRST);
+        register(CollectionFunctions.LAST);
 
         register(NamingFunctions.TO_SNAKE_CASE);
         register(NamingFunctions.FROM_SNAKE_CASE);

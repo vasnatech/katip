@@ -138,7 +138,7 @@ public class DefaultParser implements Parser {
                     state = 0;
                 }
                 case 30 -> {
-                    if (previousToken == null || previousToken.getValue() == null|| previousToken.getValue() == TagTokenType.EndOfLine) {
+                    if (previousToken == null || previousToken.getValue() == null || previousToken.getValue() == TagTokenType.EndOfLine) {
                         Text text = new Text(currentToken.getMatch());
                         containers.peek().addChild(text);
                     }
@@ -268,7 +268,7 @@ public class DefaultParser implements Parser {
                             state = 15;
                         } else {
                             if (currentToken.getValue() != null) {
-                                throw new RuntimeException("Expecting identifier, number or string but found '" + currentToken.getMatch() + "' at line " + line + ".");
+                                throw new RuntimeException("Expecting identifier, number, boolean or string but found '" + currentToken.getMatch() + "' at line " + line + ".");
                             }
                             Long number = parseLong(currentToken.getMatch());
                             if (number != null) {
@@ -279,8 +279,14 @@ public class DefaultParser implements Parser {
                                     state = 9;
                                 }
                             } else {
-                                goNext = false;
-                                state = 20;
+                                Boolean bool = parseBoolean(currentToken.getMatch());
+                                if (bool != null) {
+                                    currentExpression = new ConstantExpression(bool);
+                                    state = 9;
+                                } else {
+                                    goNext = false;
+                                    state = 20;
+                                }
                             }
                         }
                     }
@@ -432,5 +438,15 @@ public class DefaultParser implements Parser {
         } catch (NumberFormatException e) {
             return null;
         }
+    }
+
+    static Boolean parseBoolean(String text) {
+        if ("false".equals(text)) {
+            return Boolean.FALSE;
+        }
+        if ("true".equals(text)) {
+            return Boolean.TRUE;
+        }
+        return null;
     }
 }

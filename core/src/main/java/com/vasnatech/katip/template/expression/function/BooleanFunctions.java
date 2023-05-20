@@ -2,6 +2,7 @@ package com.vasnatech.katip.template.expression.function;
 
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 public interface BooleanFunctions {
 
@@ -43,12 +44,15 @@ public interface BooleanFunctions {
         BinaryOperator<Boolean> function;
 
         BinaryBooleanFunction(String name, BinaryOperator<Boolean> function) {
-            super(name, 2, 2);
+            super(name, 2, Integer.MAX_VALUE);
             this.function = function;
         }
         @Override
         public Object invoke(Object[] params) {
-            return function.apply((Boolean) params[0], (Boolean) params[1]);
+            return Stream.of(params)
+                    .map(Boolean.class::cast)
+                    .reduce(function)
+                    .orElse(Boolean.FALSE);
         }
     }
 }
