@@ -1,5 +1,0 @@
-com/vasnatech/katip/datation/sql/MySqlTemplateTest.class
-com/vasnatech/katip/template/parser/DefaultParserTest.class
-com/vasnatech/katip/datation/jpa/HibernateGeneratorTest.class
-com/vasnatech/katip/datation/schema/EntitySchemaGeneratorTest.class
-com/vasnatech/katip/datation/sql/MySqlGeneratorTest.class
