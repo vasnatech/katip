@@ -19,16 +19,11 @@ public final class MySqlProjectTemplate extends ProjectTemplate.Wrapper {
 
     private MySqlProjectTemplate() throws IOException {
         super (
-                ProjectTemplate.of(
-                    "sql/mysql",
-                    Path.of("./sql/mysql"),
-                    Set.of(
-                            Path.of("mysql.katip"),
-                            Path.of("mysql-column.katip")
-                    ),
-                    Set.of(
-                            Path.of("mysql.katip")
-                    )
+            ProjectTemplate.fromPaths(
+                "sql/mysql",
+                MySqlProjectTemplate.class,
+                Set.of(Path.of("mysql.katip"), Path.of("mysql-column.katip")),
+                Set.of(Path.of("mysql.katip"))
             )
         );
     }

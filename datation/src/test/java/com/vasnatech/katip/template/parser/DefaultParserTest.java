@@ -11,7 +11,7 @@ public class DefaultParserTest {
     @Test
     void parse() throws IOException {
         DefaultParser parser = new DefaultParser();
-        Document document = parser.parse(Resources.asString("sql/mysql/mysql.katip"));
+        Document document = parser.parse(Resources.asString("com/vasnatech/katip/datation/sql/mysql/mysql.katip"));
         System.out.println(document);
     }
 }

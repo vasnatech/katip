@@ -19,17 +19,15 @@ public final class HibernateProjectTemplate extends ProjectTemplate.Wrapper {
 
     private HibernateProjectTemplate() throws IOException {
         super (
-                ProjectTemplate.of(
+            ProjectTemplate.fromPaths(
                     "jpa/hibernate",
-                    Path.of("./jpa/hibernate"),
+                    HibernateProjectTemplate.class,
                     Set.of(
                             Path.of("hibernate.katip"),
                             Path.of("hibernate-field-type.katip"),
                             Path.of("hibernate-cfg-xml.katip")
                     ),
-                    Set.of(
-                            Path.of("hibernate.katip")
-                    )
+                    Set.of(Path.of("hibernate.katip"))
             )
         );
     }

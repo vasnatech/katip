@@ -6,18 +6,19 @@ import com.vasnatech.katip.template.parser.Parser;
 import com.vasnatech.katip.template.parser.ParserFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public interface ProjectTemplate {
 
     String name();
-
-    Path root();
 
     Map<Path, Document> documents();
 
@@ -30,31 +31,35 @@ public interface ProjectTemplate {
 
     default Project.Builder append(Project.Builder builder) {
         return builder
-                .root(this.root())
                 .documents(this.documents())
                 .renders(this.renderPaths());
     }
 
-    static ProjectTemplate of(String name, Path root, Set<Path> templatePaths, Set<Path> renderPaths) throws IOException {
+    static ProjectTemplate fromPaths(String name, Class<? extends ProjectTemplate> relativeTo, Set<Path> templatePaths, Set<Path> renderPaths) throws IOException {
+        Map<Path, InputStream> templates = templatePaths.stream().collect(Collectors.toMap(
+                Function.identity(),
+                path -> Resources.asInputStream(relativeTo, path.toString())
+        ));
+        return fromInputStreams(name, templates, renderPaths);
+    }
+
+    static ProjectTemplate fromInputStreams(String name, Map<Path, InputStream> templates, Set<Path> renderPaths) throws IOException {
         Parser parser = ParserFactory.instance().create(Map.of());
         Map<Path, Document> documents = new LinkedHashMap<>();
-        for (Path documentPath : templatePaths) {
-            if (documents.containsKey(documentPath))
-                continue;
-            Path path = root.resolve(documentPath);
-            try (Reader reader = new InputStreamReader(Resources.asInputStream(path.toString()))) {
+        for (Map.Entry<Path, InputStream> e : templates.entrySet()) {
+            try (Reader reader = new InputStreamReader(e.getValue())) {
                 Document document = parser.parse(reader);
-                documents.put(documentPath, document);
+                documents.put(e.getKey(), document);
             }
         }
-        return of(name, root, documents, renderPaths);
+        return of(name, documents, renderPaths);
     }
 
-    static ProjectTemplate of(String name, Path root, Map<Path, Document> documents, Set<Path> renderPaths) {
-        return new Default(name, root, documents, renderPaths);
+    static ProjectTemplate of(String name, Map<Path, Document> documents, Set<Path> renderPaths) {
+        return new Default(name, documents, renderPaths);
     }
 
-    record Default(String name, Path root, Map<Path, Document> documents, Set<Path> renderPaths) implements ProjectTemplate {}
+    record Default(String name, Map<Path, Document> documents, Set<Path> renderPaths) implements ProjectTemplate {}
 
     class Wrapper implements ProjectTemplate {
         final ProjectTemplate source;
@@ -65,10 +70,6 @@ public interface ProjectTemplate {
         @Override
         public String name() {
             return source.name();
-        }
-        @Override
-        public Path root() {
-            return source.root();
         }
         @Override
         public Map<Path, Document> documents() {

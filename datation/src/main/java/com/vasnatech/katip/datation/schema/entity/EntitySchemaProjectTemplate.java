@@ -19,16 +19,11 @@ public final class EntitySchemaProjectTemplate extends ProjectTemplate.Wrapper {
 
     private EntitySchemaProjectTemplate() throws IOException {
         super(
-                    ProjectTemplate.of(
+            ProjectTemplate.fromPaths(
                     "schema/entity",
-                    Path.of("./schema/entity"),
-                    Set.of(
-                            Path.of("entity-schema.katip"),
-                            Path.of("entity-field-type.katip")
-                    ),
-                    Set.of(
-                            Path.of("entity-schema.katip")
-                    )
+                    EntitySchemaProjectTemplate.class,
+                    Set.of(Path.of("entity-schema.katip"), Path.of("entity-field-type.katip")),
+                    Set.of(Path.of("entity-schema.katip"))
             )
         );
     }

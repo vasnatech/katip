@@ -114,7 +114,7 @@ public record Project(
             return this;
         }
 
-        public Builder parameters(Map<String, Object> parameters) {
+        public Builder parameters(Map<String, ?> parameters) {
             this.parameters.putAll(parameters);
             return this;
         }

@@ -18,7 +18,7 @@ import jakarta.persistence.*;
 <<==if==>>
 <<==foreach==>>
 <<--if condition="isBaseClass"-->>
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.JOINED)
 <<==if==>>
 <<--set key="isSubClass" value="isPresent(entity.getInherits().getBase())"-->>
 <<--if condition="and(isSubClass,not(entity.getIds().isEmpty()))"-->>
@@ -45,6 +45,9 @@ public class <<--get key="className"-->><<--if condition="isSubClass"-->> extend
 <<--if condition="isIdField"-->>
     @Id
 <<==if==>>
+<<--if condition="field.isEnum()"-->>
+    @Convert(converter = <<--get key="fieldType"-->>Converter.class)
+<<==if==>>
 <<--if condition="field.isSimple()"-->>
     @Column(name="<<--get key="toUpperCase(toSnakeCase(fromSnakeCase(field.getDDL().getColumn())))"-->>")
 <<==if==>>
@@ -59,28 +62,28 @@ public class <<--get key="className"-->><<--if condition="isSubClass"-->> extend
     @OneToMany(cascade = CascadeType.ALL<<--if condition="eq('LAZY',fetchType)"-->>, fetch = FetchType.LAZY<<==if==>><<--if condition="eq('EAGER',fetchType)"-->>, fetch = FetchType.EAGER<<==if==>>)
 <<--if condition="eq(1,ddlColumns.size())"-->>
 <<--set key="ddlColumnName" value="first(ddlColumns.values())"-->>
-    @JoinColumn(name="<<--get key="toUpperCase(toSnakeCase(fromSnakeCase(ddlColumnName)))"-->>")
+    @JoinColumn(name="<<--get key="toUpperCase(toSnakeCase(fromSnakeCase(ddlColumnName)))"-->>", insertable=false, updatable=false)
 <<==if==>>
 <<--if condition="lt(1,ddlColumns.size())"-->>
-    @JoinColumns({<<--foreach iterator="columnsIte" items="field.getDDL().getTable().getColumns().keySet()"-->>@JoinColumn(name = "<<--get key="columnsIte.getItem()"-->>")<<--unless condition="columnsIte.isLast()"-->>, <<==unless==>><<==foreach==>>})
+    @JoinColumns({<<--foreach iterator="columnsIte" items="field.getDDL().getTable().getColumns().keySet()"-->>@JoinColumn(name = "<<--get key="toUpperCase(columnsIte.getItem())"-->>", insertable=false, updatable=false)<<--unless condition="columnsIte.isLast()"-->>, <<==unless==>><<==foreach==>>})
 <<==if==>>
 <<==if==>>
 <<--if condition="eq('MANY_TO_ONE',relationType)"-->>
     @ManyToOne(cascade = CascadeType.ALL<<--if condition="eq('LAZY',fetchType)"-->>, fetch = FetchType.LAZY<<==if==>><<--if condition="eq('EAGER',fetchType)"-->>, fetch = FetchType.EAGER<<==if==>>)
 <<--if condition="eq(1,ddlColumns.size())"-->>
 <<--set key="ddlColumnName" value="first(ddlColumns.keySet())"-->>
-    @JoinColumn(name="<<--get key="toUpperCase(toSnakeCase(fromSnakeCase(ddlColumnName)))"-->>")
+    @JoinColumn(name="<<--get key="toUpperCase(toSnakeCase(fromSnakeCase(ddlColumnName)))"-->>", insertable=false, updatable=false)
 <<==if==>>
 <<--if condition="lt(1,ddlColumns.size())"-->>
-    @JoinColumns({<<--foreach iterator="columnsIte" items="field.getDDL().getTable().getColumns().keySet()"-->>@JoinColumn(name = "<<--get key="columnsIte.getItem()"-->>")<<--unless condition="columnsIte.isLast()"-->>, <<==unless==>><<==foreach==>>})
+    @JoinColumns({<<--foreach iterator="columnsIte" items="field.getDDL().getTable().getColumns().keySet()"-->>@JoinColumn(name = "<<--get key="toUpperCase(columnsIte.getItem())"-->>", insertable=false, updatable=false)<<--unless condition="columnsIte.isLast()"-->>, <<==unless==>><<==foreach==>>})
 <<==if==>>
 <<==if==>>
 <<--if condition="eq('MANY_TO_MANY',relationType)"-->>
     @ManyToMany(cascade = CascadeType.ALL<<--if condition="eq('LAZY',fetchType)"-->>, fetch = FetchType.LAZY<<==if==>><<--if condition="eq('EAGER',fetchType)"-->>, fetch = FetchType.EAGER<<==if==>>)
     @JoinTable(
         name = "<<--get key="toUpperCase(toSnakeCase(fromSnakeCase(field.getDDL().getTable().getName())))"-->>",
-        joinColumns = {<<--foreach iterator="columnsIte" items="field.getDDL().getTable().getColumns().values()"-->>@JoinColumn(name = "<<--get key="columnsIte.getItem()"-->>")<<--unless condition="columnsIte.isLast()"-->>, <<==unless==>><<==foreach==>>},
-        inverseJoinColumns = {<<--foreach iterator="columnsIte" items="field.getDDL().getInverseTable().getColumns().values()"-->>@JoinColumn(name = "<<--get key="columnsIte.getItem()"-->>")<<--unless condition="columnsIte.isLast()"-->>, <<==unless==>><<==foreach==>>}
+        joinColumns = {<<--foreach iterator="columnsIte" items="field.getDDL().getTable().getColumns().values()"-->>@JoinColumn(name = "<<--get key="toUpperCase(columnsIte.getItem())"-->>", insertable=false, updatable=false)<<--unless condition="columnsIte.isLast()"-->>, <<==unless==>><<==foreach==>>},
+        inverseJoinColumns = {<<--foreach iterator="columnsIte" items="field.getDDL().getInverseTable().getColumns().values()"-->>@JoinColumn(name = "<<--get key="toUpperCase(columnsIte.getItem())"-->>", insertable=false, updatable=false)<<--unless condition="columnsIte.isLast()"-->>, <<==unless==>><<==foreach==>>}
     )
 <<==if==>>
 <<==if==>>
@@ -112,7 +115,7 @@ public class <<--get key="className"-->><<--if condition="isSubClass"-->> extend
         <<--get key="toUpperCase(fromSnakeCase(enumEntryIte.getItem().getKey()))"-->>("<<--get key="enumEntryIte.getItem().getValue()"-->>"),
 <<==foreach==>>
         ;
-        String value;
+        final String value;
         <<--get key="enumType"-->>(String value) {
             this.value = value;
         }
@@ -121,6 +124,18 @@ public class <<--get key="className"-->><<--if condition="isSubClass"-->> extend
         }
         public static <<--get key="enumType"-->> findByValue(String value) {
             return java.util.stream.Stream.of(values()).filter(it -> it.value.equals(value)).findAny().orElse(null);
+        }
+    }
+
+    @Converter(autoApply = true)
+    public static class <<--get key="enumType"-->>Converter implements AttributeConverter<<<--get key="enumType"-->>, String> {
+        @Override
+        public String convertToDatabaseColumn(<<--get key="enumType"-->> enumConstant) {
+            return enumConstant == null ? null : enumConstant.value;
+        }
+        @Override
+        public <<--get key="enumType"-->> convertToEntityAttribute(String value) {
+            return <<--get key="enumType"-->>.findByValue(value);
         }
     }
 <<==if==>>

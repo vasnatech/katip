@@ -13,7 +13,7 @@ public class MySqlTemplateTest {
     @Test
     void parse() throws IOException {
         Parser parser = ParserFactory.instance().create(Map.of());
-        Document document = parser.parse(Resources.asInputStream("sql/mysql/mysql.katip"));
+        Document document = parser.parse(Resources.asInputStream("com/vasnatech/katip/datation/sql/mysql/mysql.katip"));
         System.out.println(document);
     }
 }
