@@ -1,5 +1,6 @@
 package com.vasnatech.katip.template.renderer;
 
+import com.vasnatech.commons.expression.EvaluationContext;
 import com.vasnatech.katip.template.Output;
 import com.vasnatech.katip.template.document.Part;
 import com.vasnatech.katip.template.document.Tag;
@@ -20,6 +21,8 @@ public interface TagRenderer {
     }
 
     void validate(Tag tag) throws IOException;
+
+    EvaluationContext s = null;
 
     default void validateAllAttributesExist(Tag tag, String... attributeNames) throws IOException {
 

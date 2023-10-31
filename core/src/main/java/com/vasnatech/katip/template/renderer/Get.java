@@ -1,7 +1,7 @@
 package com.vasnatech.katip.template.renderer;
 
+import com.vasnatech.commons.expression.Expression;
 import com.vasnatech.katip.template.Output;
-import com.vasnatech.katip.template.expression.Expression;
 import com.vasnatech.katip.template.document.Tag;
 
 import java.io.IOException;
@@ -23,8 +23,7 @@ public class Get extends LeafRenderer {
         Expression keyExpr = tag.attributes().get("key");
         Object value = keyExpr.get(renderContext);
         if (value != null) {
-            if (value instanceof Tag) {
-                Tag blockTag = (Tag) value;
+            if (value instanceof Tag blockTag) {
                 RenderContext subRendererContext = renderContext.createSubContext();
                 renderChildren(blockTag, output, subRendererContext);
             } else {

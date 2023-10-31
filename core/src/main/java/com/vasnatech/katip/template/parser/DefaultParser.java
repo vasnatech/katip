@@ -1,9 +1,12 @@
 package com.vasnatech.katip.template.parser;
 
+import com.vasnatech.commons.expression.Expression;
+import com.vasnatech.commons.expression.ExpressionException;
+import com.vasnatech.commons.expression.parser.DefaultExpressionParser;
+import com.vasnatech.commons.expression.parser.ExpressionParser;
 import com.vasnatech.commons.text.token.Token;
 import com.vasnatech.commons.text.token.Tokenizer;
 import com.vasnatech.katip.template.document.Document;
-import com.vasnatech.katip.template.expression.*;
 import com.vasnatech.katip.template.document.Tag;
 import com.vasnatech.katip.template.renderer.TagRenderer;
 import com.vasnatech.katip.template.renderer.TagRenderers;
@@ -20,11 +23,9 @@ public class DefaultParser implements Parser {
 
     enum TagAttributeTokenType {WhiteSpace, Equal, DoubleQuotes}
 
-    enum ExpressionTokenType {WhiteSpace, OpenParenthesis, CloseParenthesis, Dot, Comma, Quote}
-
     final Tokenizer<TagTokenType> tagTokenizer;
     final Tokenizer<TagAttributeTokenType> tagAttributeTokenizer;
-    final Tokenizer<ExpressionTokenType> expressionTokenizer;
+    final ExpressionParser expressionParser;
 
     DefaultParser() {
         tagTokenizer = new Tokenizer<>(
@@ -43,16 +44,7 @@ public class DefaultParser implements Parser {
                 new Token<>("\t", TagAttributeTokenType.WhiteSpace, false),
                 new Token<>("\b", TagAttributeTokenType.WhiteSpace, false)
         );
-        expressionTokenizer = new Tokenizer<>(
-                new Token<>("(", ExpressionTokenType.OpenParenthesis),
-                new Token<>(")", ExpressionTokenType.CloseParenthesis),
-                new Token<>(".", ExpressionTokenType.Dot),
-                new Token<>(",", ExpressionTokenType.Comma),
-                new Token<>("'", ExpressionTokenType.Quote),
-                new Token<>(" ", ExpressionTokenType.WhiteSpace, false),
-                new Token<>("\t", ExpressionTokenType.WhiteSpace, false),
-                new Token<>("\b", ExpressionTokenType.WhiteSpace, false)
-        );
+        expressionParser = new DefaultExpressionParser();
     }
 
     @Override
@@ -129,6 +121,8 @@ public class DefaultParser implements Parser {
                     state = 0;
                 }
                 case 20 -> {
+                    //TODO remove while we are already iterating
+                    //TODO what happens if end of line does not exists?
                     while (iterator.hasNext()) {
                         if (iterator.next().getValue() == TagTokenType.EndOfLine) {
                             line.incrementAndGet();
@@ -232,187 +226,10 @@ public class DefaultParser implements Parser {
     }
 
     Expression parseExpression(String expressionAsText, AtomicInteger line) {
-        ExpressionParser expressionParser = new ExpressionParser(expressionAsText, line);
-        return expressionParser.parse();
-    }
-
-    class ExpressionParser {
-        final String expressionAsText;
-        final Iterator<Token<ExpressionTokenType>> iterator;
-        final AtomicInteger line;
-
-        int state = 0;
-        boolean goNext = true;
-        Token<ExpressionTokenType> previousToken = null;
-        Token<ExpressionTokenType> currentToken = null;
-
-
-        ExpressionParser(String expressionAsText, AtomicInteger line) {
-            this.expressionAsText = expressionAsText;
-            this.iterator = expressionTokenizer.tokenize(expressionAsText);
-            this.line = line;
-        }
-
-        Expression parse() {
-            Expression currentExpression = null;
-            while (iterator.hasNext() || state == 9 || !goNext) {
-                if (state != 9 && goNext) {
-                    previousToken = currentToken;
-                    currentToken = iterator.next();
-                }
-                goNext = true;
-                switch (state) {
-                    case 0 -> {
-                        if (currentToken.getValue() == ExpressionTokenType.Quote) {
-                            currentExpression = new ConstantExpression("");
-                            state = 15;
-                        } else {
-                            if (currentToken.getValue() != null) {
-                                throw new RuntimeException("Expecting identifier, number, boolean or string but found '" + currentToken.getMatch() + "' at line " + line + ".");
-                            }
-                            Long number = parseLong(currentToken.getMatch());
-                            if (number != null) {
-                                currentExpression = new ConstantExpression(number);
-                                if (iterator.hasNext()) {
-                                    state = 11;
-                                } else {
-                                    state = 9;
-                                }
-                            } else {
-                                Boolean bool = parseBoolean(currentToken.getMatch());
-                                if (bool != null) {
-                                    currentExpression = new ConstantExpression(bool);
-                                    state = 9;
-                                } else {
-                                    goNext = false;
-                                    state = 20;
-                                }
-                            }
-                        }
-                    }
-                    case 11 -> { //currentExpression is number
-                        if (currentToken.getValue() == ExpressionTokenType.Dot) {
-                            state = 12;
-                        } else {
-                            state = 9;
-                        }
-                    }
-                    case 12 -> {//currentExpression is number & last token was DOT
-                        if (currentToken.getValue() != null) {
-                            throw new RuntimeException("Expecting number but found '" + currentToken.getMatch() + "' at line " + line + ".");
-                        }
-                        Long number = parseLong(currentToken.getMatch());
-                        if (number == null || number < 0) {
-                            throw new RuntimeException("Expecting number but found '" + currentToken.getMatch() + "' at line " + line + ".");
-                        }
-                        ConstantExpression constantExpression = (ConstantExpression) currentExpression;
-                        Double decimal = Double.valueOf(constantExpression + "." + number);
-                        currentExpression = new ConstantExpression(decimal);
-                        state = 9;
-                    }
-                    case 15 -> {//current expression is a string
-                        if (currentToken.getValue() == ExpressionTokenType.Quote) {
-                            previousToken = currentToken;
-                            if (iterator.hasNext())
-                                currentToken = iterator.next();
-                            state = 9;
-                        } else {
-                            ConstantExpression constantExpression = (ConstantExpression) currentExpression;
-                            currentExpression = new ConstantExpression(constantExpression + currentToken.getMatch());
-                            state = 15;
-                        }
-                    }
-                    case 20 -> {//current token is start of a property or a function
-                        if (!isJavaIdentifier(currentToken.getMatch())) {
-                            throw new RuntimeException("Expecting identifier but found '" + currentToken.getMatch() + "' at line " + line + ".");
-                        }
-                        if (iterator.hasNext()) {
-                            previousToken = currentToken;
-                            currentToken = iterator.next();
-                            if (currentToken.getValue() == ExpressionTokenType.OpenParenthesis) {
-                                FunctionExpression functionExpression = new FunctionExpression(previousToken.getMatch());
-                                currentExpression = new ChainedExpression(currentExpression, functionExpression);
-                                state = 30;
-                                parseFunctionParameters(functionExpression);
-                                if (iterator.hasNext()) {
-                                    state = 21;
-                                } else {
-                                    state = 9;
-                                }
-                            }
-                            else if (currentToken.getValue() == ExpressionTokenType.Dot) {
-                                currentExpression = new ChainedExpression(currentExpression, new PropertyExpression(previousToken.getMatch()));
-                                state = 20;
-                            }
-                            else if (currentToken.getValue() == ExpressionTokenType.Comma || currentToken.getValue() == ExpressionTokenType.CloseParenthesis) {
-                                currentExpression = new ChainedExpression(currentExpression, new PropertyExpression(previousToken.getMatch()));
-                                state = 9;
-                            }
-                            else {
-                                throw new RuntimeException("Expecting '.' or '(' but found '" + currentToken.getMatch() + "' at line " + line + ".");
-                            }
-                        } else {
-                            currentExpression = new ChainedExpression(currentExpression, new PropertyExpression(currentToken.getMatch()));
-                            state = 9;
-                        }
-                    }
-                    case 21 -> {
-                        if (currentToken.getValue() == ExpressionTokenType.Dot) {
-                            state = 20;
-                        }
-                        else if (currentToken.getValue() == ExpressionTokenType.Comma || currentToken.getValue() == ExpressionTokenType.CloseParenthesis) {
-                            state = 9;
-                        } else {
-                            state = 20;
-                            goNext = false;
-                        }
-                    }
-                    case 9 -> {
-                        return currentExpression;
-                    }
-                }
-            }
-            throw new RuntimeException("Unable to parse '" + expressionAsText + "' at line " + line + ".");
-        }
-
-        void parseFunctionParameters(FunctionExpression functionExpression) {
-            while (iterator.hasNext() || !goNext) {
-                if (goNext) {
-                    previousToken = currentToken;
-                    currentToken = iterator.next();
-                }
-                goNext = true;
-                switch (state) {
-                    case 30 -> {
-                        if (currentToken.getValue() == ExpressionTokenType.CloseParenthesis) {
-                            return;
-                        }
-                        state = 32;
-                        goNext = false;
-                    }
-                    case 31 -> {
-                        if (currentToken.getValue() == ExpressionTokenType.CloseParenthesis) {
-                            return;
-                        }
-                        else if (currentToken.getValue() == ExpressionTokenType.Comma) {
-                            state = 32;
-                        }
-                        else {
-                            throw new RuntimeException("Expecting ',' or ')' but found '" + currentToken.getMatch() + "' at line " + line + ".");
-                       }
-                    }
-                    case 32 -> {
-                        if (currentToken.getValue() == null || currentToken.getValue() == ExpressionTokenType.Quote) {
-                            state = 0;
-                            goNext = false;
-                            Expression expression = parse();
-                            functionExpression.addParameter(expression);
-                            state = 31;
-                            goNext = false;
-                        }
-                    }
-                }
-            }
+        try {
+            return expressionParser.parse(expressionAsText);
+        } catch (ExpressionException e) {
+            throw new RuntimeException("Unable to parse expression" + expressionAsText + " at lime " + line + ". " + e.getMessage(), e);
         }
     }
 

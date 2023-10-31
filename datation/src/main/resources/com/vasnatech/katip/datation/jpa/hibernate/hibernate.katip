@@ -35,7 +35,41 @@ import jakarta.persistence.*;
 })
 <<==if==>>
 <<==if==>>
+<<--if condition="lt(1,entity.getIds().size())"-->>
+@IdClass(<<--get key="className"-->>.<<--get key="className"-->>Id.class)
+<<==if==>>
 public class <<--get key="className"-->><<--if condition="isSubClass"-->> extends <<--get key="entity.getInherits().getBase()"-->><<==if==>> {
+
+<<--if condition="lt(1,entity.getIds().size())"-->>
+<<--set key="idClassName" value="concat(className,'Id')"-->>
+    public static class <<--get key="idClassName"-->> implements java.io.Serializable {
+<<--foreach item="idColumnName" items="entity.getIds()"-->>
+        private <<--set key="field" value="entity.getFields().get(idColumnName)"-->><<--include path="'hibernate-field-type.katip'"-->> <<--get key="idColumnName"-->>;
+<<==foreach==>>
+
+        public <<--get key="idClassName"-->>() {
+        }
+
+        public <<--get key="idClassName"-->>(<<--foreach iterator="idColumnNameIte" items="entity.getIds()"-->><<--set key="field" value="entity.getFields().get(idColumnNameIte.getItem())"-->><<--include path="'hibernate-field-type.katip'"-->> <<--get key="idColumnNameIte.getItem()"-->><<--unless condition="idColumnNameIte.isLast()"-->>, <<==unless==>><<==foreach==>>) {
+<<--foreach item="idColumnName" items="entity.getIds()"-->>
+            this.<<--get key="idColumnName"-->> = <<--get key="idColumnName"-->>;
+<<==foreach==>>
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            <<--get key="idClassName"-->> other = (<<--get key="idClassName"-->>) o;
+            return <<--foreach iterator="idColumnNameIte" items="entity.getIds()"-->>java.util.Objects.equals(<<--get key="idColumnNameIte.getItem()"-->>, other.<<--get key="idColumnNameIte.getItem()"-->>)<<--unless condition="idColumnNameIte.isLast()"-->> && <<==unless==>><<==foreach==>>;
+        }
+
+        @Override
+        public int hashCode() {
+            return java.util.Objects.hash(<<--foreach iterator="idColumnNameIte" items="entity.getIds()"-->><<--get key="idColumnNameIte.getItem()"-->><<--unless condition="idColumnNameIte.isLast()"-->>, <<==unless==>><<==foreach==>>);
+        }
+    }
+<<==if==>>
 
 <<--foreach item="field" items="entity.getFields().values()"-->>
 <<--set-block key="fieldType"-->><<--include path="'hibernate-field-type.katip'"-->><<==set-block==>>

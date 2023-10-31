@@ -279,6 +279,47 @@
             "item-type": "Authority"
           }
         }
+      },
+      "Account": {
+        "ddl": {
+          "table": "account"
+        },
+        "appends": {
+          "defUserAndTime": {
+            "anchor": "tail"
+          }
+        },
+        "ids": ["accountNumber", "accountType"],
+        "fields": {
+          "accountNumber": {
+            "ddl": {
+              "column": "account_number"
+            },
+            "type": "string",
+            "nullable": false
+          },
+          "accountType": {
+            "ddl": {
+              "column": "account_type"
+            },
+            "type": "string",
+            "nullable": false
+          },
+          "name": {
+            "ddl": {
+              "column": "name"
+            },
+            "type": "string",
+            "nullable": true
+          },
+          "info": {
+            "ddl": {
+              "column": "info"
+            },
+            "type": "string",
+            "nullable": true
+          }
+        }
       }
     }
   }

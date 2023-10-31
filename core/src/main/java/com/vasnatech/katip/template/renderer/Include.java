@@ -1,8 +1,8 @@
 package com.vasnatech.katip.template.renderer;
 
+import com.vasnatech.commons.expression.Expression;
 import com.vasnatech.katip.template.Output;
 import com.vasnatech.katip.template.document.Document;
-import com.vasnatech.katip.template.expression.Expression;
 import com.vasnatech.katip.template.document.Tag;
 
 import java.io.IOException;

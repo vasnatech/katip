@@ -1,0 +1,26 @@
+<<--if condition="field.isEnum()"-->>EnumNotSupported<<==if==>>
+<<--unless condition="field.isEnum()"-->>
+<<--set key="fieldTypeName" value="field.getType().name()"-->>
+<<--set key="fieldItemType" value="field.getItemType()"-->>
+<<--if condition="eq('CHARACTER',fieldTypeName)"-->>Character<<==if==>>
+<<--if condition="eq('STRING',fieldTypeName)"-->>String<<==if==>>
+<<--if condition="eq('BOOLEAN',fieldTypeName)"-->>Boolean<<==if==>>
+<<--if condition="eq('BYTE',fieldTypeName)"-->>Byte<<==if==>>
+<<--if condition="eq('INT16',fieldTypeName)"-->>Short<<==if==>>
+<<--if condition="eq('INT32',fieldTypeName)"-->>Integer<<==if==>>
+<<--if condition="eq('INT64',fieldTypeName)"-->>Long<<==if==>>
+<<--if condition="eq('INTEGER',fieldTypeName)"-->>java.util.BigInteger<<==if==>>
+<<--if condition="eq('FLOAT',fieldTypeName)"-->>Float<<==if==>>
+<<--if condition="eq('DOUBLE',fieldTypeName)"-->>Double<<==if==>>
+<<--if condition="eq('DECIMAL',fieldTypeName)"-->>java.uti.BigDecimal<<==if==>>
+<<--if condition="eq('DATE',fieldTypeName)"-->>java.time.LocalDate<<==if==>>
+<<--if condition="eq('TIME',fieldTypeName)"-->>java.time.LocalTime<<==if==>>
+<<--if condition="eq('DATETIME',fieldTypeName)"-->>java.time.LocalDateTime<<==if==>>
+<<--if condition="eq('INSTANT',fieldTypeName)"-->>java.time.Instant<<==if==>>
+<<--if condition="eq('BYTE_ARRAY',fieldTypeName)"-->>NotSupported<<==if==>>
+<<--if condition="eq('CHAR_ARRAY',fieldTypeName)"-->>NotSupported<<==if==>>
+<<--if condition="eq('LIST',fieldTypeName)"-->>NotSupported<<==if==>>
+<<--if condition="eq('SET',fieldTypeName)"-->>NotSupported<<==if==>>
+<<--if condition="eq('COLLECTION',fieldTypeName)"-->>NotSupported<<==if==>>
+<<--if condition="eq('ENTITY',fieldTypeName)"-->><<--get key="fieldItemType"-->><<==if==>>
+<<==unless==>>

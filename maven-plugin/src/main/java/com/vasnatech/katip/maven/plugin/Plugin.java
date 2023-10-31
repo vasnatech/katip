@@ -112,6 +112,7 @@ public class Plugin extends AbstractMojo {
             case "sql/mysql" -> "com.vasnatech.katip.datation.sql.mysql.MySqlProjectTemplate";
             case "schema/entity" -> "com.vasnatech.katip.datation.schema.entity.EntitySchemaProjectTemplate";
             case "jpa/hibernate" -> "com.vasnatech.katip.datation.jpa.hibernate.HibernateProjectTemplate";
+            case "jpa/spring" -> "com.vasnatech.katip.datation.jpa.spring.SpringJpaProjectTemplate";
             default -> throw new MojoExecutionException("Unsupported template " + templateName);
         };
         Class<?> clazz = classLoader.loadClass(className);

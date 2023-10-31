@@ -1,7 +1,7 @@
 package com.vasnatech.katip.template.document;
 
+import com.vasnatech.commons.expression.Expression;
 import com.vasnatech.katip.template.Output;
-import com.vasnatech.katip.template.expression.Expression;
 import com.vasnatech.katip.template.renderer.RenderContext;
 import com.vasnatech.katip.template.renderer.TagRenderer;
 
@@ -34,7 +34,6 @@ public class Tag implements Part {
                     .collect(Collectors.joining(", ", "(", ")"))
                 + children.stream()
                     .map(Part::toString)
-                    //.map(s -> s.replaceAll("\r", "\\r").replaceAll("\n", "\\n").replaceAll("\t", "\\t"))
                     .collect(Collectors.joining(""));
     }
 
