@@ -1,8 +1,8 @@
 package com.vasnatech.katip.template.renderer;
 
-import com.vasnatech.commons.expression.Expression;
 import com.vasnatech.katip.template.Output;
 import com.vasnatech.katip.template.document.Tag;
+import org.springframework.expression.Expression;
 
 import java.io.IOException;
 
@@ -14,20 +14,24 @@ public class Get extends LeafRenderer {
     }
 
     @Override
-    public void validate(Tag tag) throws IOException {
+    public void validate(Tag tag) throws RenderException {
         validateAllAttributesExist(tag, "key");
     }
 
     @Override
-    public void render(Tag tag, Output output, RenderContext renderContext) throws IOException {
+    public void render(Tag tag, Output output, RenderContext renderContext) throws RenderException {
         Expression keyExpr = tag.attributes().get("key");
-        Object value = keyExpr.get(renderContext);
+        Object value = getValue(tag, renderContext, keyExpr);
         if (value != null) {
             if (value instanceof Tag blockTag) {
                 RenderContext subRendererContext = renderContext.createSubContext();
                 renderChildren(blockTag, output, subRendererContext);
             } else {
-                output.append(value.toString());
+                try {
+                    output.append(value.toString());
+                } catch (IOException e) {
+                    throw new RenderException(tag.path(), tag.line(), "Unable to write to file " + output.path() + ".", e);
+                }
             }
         }
     }

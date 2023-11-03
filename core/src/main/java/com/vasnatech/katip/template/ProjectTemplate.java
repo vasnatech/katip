@@ -1,7 +1,10 @@
 package com.vasnatech.katip.template;
 
+import com.vasnatech.commons.collection.Maps;
 import com.vasnatech.commons.resource.Resources;
+import com.vasnatech.commons.text.ReaderCharSequence;
 import com.vasnatech.katip.template.document.Document;
+import com.vasnatech.katip.template.parser.ParseContext;
 import com.vasnatech.katip.template.parser.Parser;
 import com.vasnatech.katip.template.parser.ParserFactory;
 
@@ -44,13 +47,27 @@ public interface ProjectTemplate {
     }
 
     static ProjectTemplate fromInputStreams(String name, Map<Path, InputStream> templates, Set<Path> renderPaths) throws IOException {
+        return fromReaders(
+                name,
+                Maps.mapValues(templates, InputStreamReader::new),
+                renderPaths
+        );
+    }
+
+    static ProjectTemplate fromReaders(String name, Map<Path, Reader> templates, Set<Path> renderPaths) throws IOException {
+        return fromCharSequences(
+                name,
+                Maps.mapValues(templates, reader -> new ReaderCharSequence(reader, 4096)),
+                renderPaths
+        );
+    }
+
+    static ProjectTemplate fromCharSequences(String name, Map<Path, CharSequence> templates, Set<Path> renderPaths) throws IOException {
         Parser parser = ParserFactory.instance().create(Map.of());
         Map<Path, Document> documents = new LinkedHashMap<>();
-        for (Map.Entry<Path, InputStream> e : templates.entrySet()) {
-            try (Reader reader = new InputStreamReader(e.getValue())) {
-                Document document = parser.parse(reader);
-                documents.put(e.getKey(), document);
-            }
+        for (Map.Entry<Path, CharSequence> e : templates.entrySet()) {
+            Document document = parser.parse(ParseContext.of(e.getKey(), e.getValue()));
+            documents.put(e.getKey(), document);
         }
         return of(name, documents, renderPaths);
     }

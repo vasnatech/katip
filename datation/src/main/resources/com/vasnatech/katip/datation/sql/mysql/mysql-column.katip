@@ -1,21 +1,21 @@
-<<--if condition="column.isEnum()"-->>ENUM(<<--foreach iterator="enumIte" items="column.getEnumValues().values()"-->><<--unless condition="enumIte.isFirst()"-->>, <<==unless==>>'<<--get key="enumIte.getItem()"-->>'<<==foreach==>>)<<==if==>>
-<<--unless condition="column.isEnum()"-->>
-<<--set key="columnTypeName" value="column.getType().name()"-->>
-<<--if condition="eq('CHAR',columnTypeName)"-->>CHAR(<<--get key="column.getLength()"-->>)<<==if==>>
-<<--if condition="eq('VARCHAR',columnTypeName)"-->>VARCHAR(<<--get key="column.getLength()"-->>)<<==if==>>
-<<--if condition="eq('BOOL',columnTypeName)"-->>BIT(1)<<==if==>>
-<<--if condition="eq('BYTE',columnTypeName)"-->>TINY<<==if==>>
-<<--if condition="eq('INT16',columnTypeName)"-->>SMALLINT<<==if==>>
-<<--if condition="eq('INT32',columnTypeName)"-->>INT<<==if==>>
-<<--if condition="eq('INT64',columnTypeName)"-->>BIGINT<<==if==>>
-<<--if condition="eq('INTEGER',columnTypeName)"-->>DECIMAL(<<--get key="column.getLength()"-->>,0)<<==if==>>
-<<--if condition="eq('FLOAT',columnTypeName)"-->>FLOAT<<==if==>>
-<<--if condition="eq('DOUBLE',columnTypeName)"-->>DOUBLE<<==if==>>
-<<--if condition="eq('DECIMAL',columnTypeName)"-->>DECIMAL(<<--get key="column.getLength()"-->>,<<--get key="column.getLength2()"-->>)<<==if==>>
-<<--if condition="eq('DATE',columnTypeName)"-->>DATE<<==if==>>
-<<--if condition="eq('TIME',columnTypeName)"-->>TIME<<==if==>>
-<<--if condition="eq('DATETIME',columnTypeName)"-->>DATETIME<<==if==>>
-<<--if condition="eq('TIMESTAMP',columnTypeName)"-->>TIMESTAMP<<==if==>>
-<<--if condition="eq('BLOB',columnTypeName)"-->>BLOB<<==if==>>
-<<--if condition="eq('CLOB',columnTypeName)"-->>CLOB<<==if==>>
+<<--if condition="column.enum"-->>ENUM(<<--foreach iterator="enumIte" items="column.enumValues.values"-->><<--unless condition="enumIte.first"-->>, <<==unless==>>'<<--get key="enumIte.item"-->>'<<==foreach==>>)<<==if==>>
+<<--unless condition="column.enum"-->>
+<<--set key="columnTypeName" value="column.type.name"-->>
+<<--if condition="'CHAR'==columnTypeName"-->>CHAR(<<--get key="column.length"-->>)<<==if==>>
+<<--if condition="'VARCHAR'==columnTypeName"-->>VARCHAR(<<--get key="column.length"-->>)<<==if==>>
+<<--if condition="'BOOL'==columnTypeName"-->>BIT(1)<<==if==>>
+<<--if condition="'BYTE'==columnTypeName"-->>TINY<<==if==>>
+<<--if condition="'INT16'==columnTypeName"-->>SMALLINT<<==if==>>
+<<--if condition="'INT32'==columnTypeName"-->>INT<<==if==>>
+<<--if condition="'INT64'==columnTypeName"-->>BIGINT<<==if==>>
+<<--if condition="'INTEGER'==columnTypeName"-->>DECIMAL(<<--get key="column.length"-->>,0)<<==if==>>
+<<--if condition="'FLOAT'==columnTypeName"-->>FLOAT<<==if==>>
+<<--if condition="'DOUBLE'==columnTypeName"-->>DOUBLE<<==if==>>
+<<--if condition="'DECIMAL'==columnTypeName"-->>DECIMAL(<<--get key="column.length"-->>,<<--get key="column.length2"-->>)<<==if==>>
+<<--if condition="'DATE'==columnTypeName"-->>DATE<<==if==>>
+<<--if condition="'TIME'==columnTypeName"-->>TIME<<==if==>>
+<<--if condition="'DATETIME'==columnTypeName"-->>DATETIME<<==if==>>
+<<--if condition="'TIMESTAMP'==columnTypeName"-->>TIMESTAMP<<==if==>>
+<<--if condition="'BLOB'==columnTypeName"-->>BLOB<<==if==>>
+<<--if condition="'CLOB'==columnTypeName"-->>CLOB<<==if==>>
 <<==unless==>>

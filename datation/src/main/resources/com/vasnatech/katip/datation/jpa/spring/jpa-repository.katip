@@ -1,18 +1,18 @@
-<<--foreach item="schema" items="schemas.getSchemas().values()"-->>
-<<--set key="entityPackage" value="concat(entityPackage,'.',toLowerCase(schema.getName()))"-->>
-<<--set key="repositoryPackage" value="concat(package,'.',toLowerCase(schema.getName()))"-->>
-<<--foreach item="entity" items="schema.getEntities().values()"-->>
-<<--set key="entityName" value="toPascalCase(fromCamelCase(entity.getName()))"-->>
-<<--set key="className" value="concat(entityName,'Repository')"-->>
-<<--set key="idFieldType" value="Void"-->>
-<<--if condition="eq(1,entity.getIds().size())"-->>
-<<--set key="field" value="entity.getFields().get(first(entity.getIds()))"-->>
+<<--foreach item="schema" items="schemas.schemas.values"-->>
+<<--set key="entityPackage" value="#concat(entityPackage,'.',#toLowerCase(schema.name))"-->>
+<<--set key="repositoryPackage" value="#concat(package,'.',#toLowerCase(schema.name))"-->>
+<<--foreach item="entity" items="schema.entities.values"-->>
+<<--set key="entityName" value="#toPascalCase(#fromCamelCase(entity.name))"-->>
+<<--set key="className" value="#concat(entityName,'Repository')"-->>
+<<--set key="idFieldType" value="'Void'"-->>
+<<--if condition="entity.ids.size == 1"-->>
+<<--set key="field" value="entity.fields.get(#first(entity.ids))"-->>
 <<--set-block key="idFieldType"-->><<--include path="'jpa-repository-id-type.katip'"-->><<==set-block==>>
 <<==if==>>
-<<--if condition="lt(1,entity.getIds().size())"-->>
-<<--set key="idFieldType" value="concat(entityName,'.',entityName,'Id')"-->>
+<<--if condition="entity.ids.size > 1"-->>
+<<--set key="idFieldType" value="#concat(entityName,'.',entityName,'Id')"-->>
 <<==if==>>
-<<--set key="filePath" value="concat(replace(repositoryPackage,'.','/'),'/',className,'.java')"-->>
+<<--set key="filePath" value="#concat(#replace(repositoryPackage,'.','/'),'/',className,'.java')"-->>
 <<--file path="filePath"-->>
 package <<--get key="repositoryPackage"-->>;
 

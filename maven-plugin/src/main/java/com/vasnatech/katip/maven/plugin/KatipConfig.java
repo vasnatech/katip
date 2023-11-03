@@ -6,7 +6,7 @@ import java.util.StringJoiner;
 public class KatipConfig {
     String template;
     String out;
-    Map<String, String> parameters;
+    Map<String, ?> parameters;
     Map<String, SchemaConfig> datationSchemas;
 
     public static class SchemaConfig {

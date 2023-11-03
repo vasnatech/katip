@@ -1,14 +1,13 @@
 package com.vasnatech.katip.template.renderer;
 
-import com.vasnatech.commons.expression.Expression;
+import com.vasnatech.commons.collection.Iterators;
 import com.vasnatech.katip.template.Output;
 import com.vasnatech.katip.template.document.Tag;
+import org.springframework.expression.Expression;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Map;
 import java.util.stream.Stream;
 
 public class Foreach extends ContainerRenderer {
@@ -19,43 +18,44 @@ public class Foreach extends ContainerRenderer {
     }
 
     @Override
-    public void validate(Tag tag) throws IOException {
+    public void validate(Tag tag) throws RenderException {
         validateAllAttributesExist(tag, "items");
         validateOneAttributeExists(tag, "iterator", "item");
     }
 
     @Override
-    public void render(Tag tag, Output output, RenderContext renderContext) throws IOException {
+    public void render(Tag tag, Output output, RenderContext renderContext) throws RenderException {
         Expression iteratorExpr = tag.attributes().get("iterator");
         Expression itemExpr = tag.attributes().get("item");
         Expression itemsExpr = tag.attributes().get("items");
-        Object items = itemsExpr.get(renderContext);
+        Object items = getValue(tag, renderContext, itemsExpr);
         Iterator<?> iterator;
         if (items == null) {
             iterator = Collections.emptyIterator();
-        } else if (items instanceof Iterator) {
-            iterator = (Iterator<?>) items;
-        } else if (items instanceof Iterable) {
-            iterator = ((Iterable<?>) items).iterator();
+        } else if (items instanceof Iterable<?> iterable) {
+            iterator = iterable.iterator();
+        } else if (items instanceof Map<?, ?> map) {
+            iterator = map.entrySet().iterator();
+        } else if (items instanceof Iterator<?> ite) {
+            iterator = ite;
         } else if (items.getClass().isArray()) {
-            iterator = List.of((Object[]) items).iterator();
-        } else if (items instanceof Stream) {
-            iterator = ((Stream<?>) items).iterator();
+            iterator = Iterators.from((Object[]) items);
+        } else if (items instanceof Stream<?> stream) {
+            iterator = stream.iterator();
         } else {
             iterator = Collections.emptyIterator();
         }
 
         int index = 0;
-        AtomicInteger length = new AtomicInteger();
         while (iterator.hasNext()) {
             RenderContext subRendererContext = renderContext.createSubContext();
             Object item = iterator.next();
             if (itemExpr != null) {
-                itemExpr.set(item, subRendererContext);
+                setValue(tag, renderContext, itemExpr, item);
             }
             if (iteratorExpr != null) {
                 EnrichedItem enrichedItem = new EnrichedItem(index, index == 0, !iterator.hasNext(), item);
-                iteratorExpr.set(enrichedItem, subRendererContext);
+                setValue(tag, renderContext, iteratorExpr, enrichedItem);
             }
             renderChildren(tag, output, subRendererContext);
             ++index;

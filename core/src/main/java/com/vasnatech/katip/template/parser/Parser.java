@@ -6,6 +6,7 @@ import com.vasnatech.katip.template.document.Document;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.nio.file.Path;
 
 public interface Parser {
 
@@ -17,5 +18,9 @@ public interface Parser {
         return parse(new ReaderCharSequence(reader, 4096));
     }
 
-    Document parse(CharSequence source) throws IOException;
+    default Document parse(CharSequence content) throws IOException {
+        return parse(ParseContext.of(Path.of("dummy"), content));
+    }
+
+    Document parse(ParseContext parseContext) throws IOException;
 }

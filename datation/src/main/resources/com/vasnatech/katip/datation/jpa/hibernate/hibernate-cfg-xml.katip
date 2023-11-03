@@ -10,10 +10,10 @@
         <property name="connection.password"><<--get key="connectionPassword"-->></property>
         <property name="connection.driver_class"><<--get key="connectionDriverClass"-->></property>
 
-<<--foreach item="schema" items="schemas.getSchemas().values()"-->>
-<<--set key="schemaPackage" value="concat(package,'.',toLowerCase(schema.getName()))"-->>
-<<--foreach item="entity" items="schema.getEntities().values()"-->>
-        <mapping class="<<--get key="schemaPackage"-->>.<<--get key="entity.getName()"-->>"/>
+<<--foreach item="schema" items="schemas.schemas.values"-->>
+<<--set key="schemaPackage" value="#concat(package,'.',#toLowerCase(schema.name))"-->>
+<<--foreach item="entity" items="schema.entities.values"-->>
+        <mapping class="<<--get key="schemaPackage"-->>.<<--get key="entity.name"-->>"/>
 <<==foreach==>>
 <<==foreach==>>
     </session-factory>

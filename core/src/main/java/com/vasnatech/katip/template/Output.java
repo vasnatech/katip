@@ -32,10 +32,22 @@ public class Output implements Appendable, Closeable {
         }
     }
 
-    public Output(Path root, Writer writer) throws IOException {
+    public Output(Path root, Writer writer) {
         this.root = root;
         this.path = null;
         this.writer = writer;
+    }
+
+    public Path root() {
+        return root;
+    }
+
+    public Path path() {
+        return path;
+    }
+
+    public Writer writer() {
+        return writer;
     }
 
     @Override
@@ -69,7 +81,7 @@ public class Output implements Appendable, Closeable {
         return new Output(root, Path.of(pathAsString));
     }
 
-    public Output create(Writer writer) throws IOException {
+    public Output create(Writer writer) {
         return new Output(root, writer);
     }
 }

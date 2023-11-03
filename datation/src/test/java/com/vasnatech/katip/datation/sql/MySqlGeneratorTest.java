@@ -33,6 +33,7 @@ public class MySqlGeneratorTest {
                 .builder()
                 .outputRoot("./target/generated-sources/katip/sql-scripts")
                 .parameter("schemas", schemas)
+                .parameter("dropTable", true)
                 .run();
     }
 }

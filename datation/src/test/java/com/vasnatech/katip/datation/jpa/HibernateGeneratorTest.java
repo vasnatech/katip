@@ -34,6 +34,11 @@ public class HibernateGeneratorTest {
                 .outputRoot("./target/generated-sources/katip")
                 .parameter("schemas", schemas)
                 .parameter("package", "com.vasnatech.entity")
+                .parameter("dialect", "org.hibernate.dialect.MariaDB103Dialect")
+                .parameter("connectionUrl", "jdbc:mariadb://localhost:3306/dumrul")
+                .parameter("connectionUsername", "developer")
+                .parameter("connectionPassword", "developer")
+                .parameter("connectionDriverClass", "org.mariadb.jdbc.Driver")
                 .run();
     }
 }

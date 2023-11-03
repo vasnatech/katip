@@ -3,8 +3,6 @@ package com.vasnatech.katip.template.renderer;
 import com.vasnatech.katip.template.Output;
 import com.vasnatech.katip.template.document.Tag;
 
-import java.io.IOException;
-
 public final class Root extends ContainerRenderer {
 
     public static final Root INSTANCE = new Root();
@@ -22,11 +20,11 @@ public final class Root extends ContainerRenderer {
     }
 
     @Override
-    public void validate(Tag tag) throws IOException {
+    public void validate(Tag tag) throws RenderException {
     }
 
     @Override
-    public void render(Tag tag, Output output, RenderContext renderContext) throws IOException {
+    public void render(Tag tag, Output output, RenderContext renderContext) throws RenderException {
         renderChildren(tag, output, renderContext);
     }
 }

@@ -1,11 +1,12 @@
 package com.vasnatech.katip.template.document;
 
-import com.vasnatech.commons.expression.Expression;
 import com.vasnatech.katip.template.Output;
 import com.vasnatech.katip.template.renderer.RenderContext;
+import com.vasnatech.katip.template.renderer.RenderException;
 import com.vasnatech.katip.template.renderer.TagRenderer;
+import org.springframework.expression.Expression;
 
-import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -14,12 +15,14 @@ import java.util.stream.Collectors;
 
 public class Tag implements Part {
 
+    final Path path;
     final int line;
     final TagRenderer renderer;
     final Map<String, Expression> attributes;
     final List<Part> children;
 
-    public Tag(int line, TagRenderer renderer) {
+    public Tag(Path path, int line, TagRenderer renderer) {
+        this.path = path;
         this.line = line;
         this.renderer = renderer;
         this.attributes = new LinkedHashMap<>();
@@ -28,17 +31,22 @@ public class Tag implements Part {
 
     @Override
     public String toString() {
-        return renderer
+        return "<" + renderer
                 + attributes.entrySet().stream()
-                    .map(entry -> entry.getKey() + "=" + entry.getValue())
+                    .map(entry -> entry.getKey() + "=" + entry.getValue().getExpressionString())
                     .collect(Collectors.joining(", ", "(", ")"))
                 + children.stream()
                     .map(Part::toString)
-                    .collect(Collectors.joining(""));
+                    .collect(Collectors.joining(""))
+                + renderer + ">";
     }
 
     public String name() {
         return renderer.name();
+    }
+
+    public Path path() {
+        return path;
     }
 
     public int line() {
@@ -70,15 +78,11 @@ public class Tag implements Part {
     }
 
     @Override
-    public void render(Output out, RenderContext renderContext) throws IOException {
+    public void render(Output out, RenderContext renderContext) throws RenderException {
         renderer.render(this, out, renderContext);
     }
 
     public void validate() {
-        try {
-            renderer.validate(this);
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        renderer.validate(this);
     }
 }

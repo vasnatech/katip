@@ -1,40 +1,42 @@
-<<--foreach item="schema" items="schemas.getSchemas().values()"-->>
-<<--file path="concat(schema.getName(),'.sql')"-->>
-<<--foreach item="table" items="schema.getTables().values()"-->>
-<<--set key="tableName" value="toUpperCase(toSnakeCase(fromSnakeCase(table.getName())))"-->>
-<<--if condition="config.isDropTable()"-->>
+<<--foreach item="schema" items="schemas.schemas.values"-->>
+<<--file path="#concat(schema.name,'.sql')"-->>
+<<--foreach item="table" items="schema.tables.values"-->>
+<<--set key="tableName" value="#toUpperCase(#toSnakeCase(#fromSnakeCase(table.name)))"-->>
+<<--if condition="dropTable"-->>
 DROP TABLE <<--get key="tableName"-->>;
 <<==if==>>
 CREATE TABLE <<--get key="tableName"-->> (
-<<--foreach iterator="columnIte" item="column" items="table.getColumns().values()"-->>
-    <<--get key="toUpperCase(toSnakeCase(fromSnakeCase(column.getName())))"-->> <<--include path="'mysql-column.katip'"-->> <<--unless condition="column.isNullable()"-->>NOT <<==unless==>>NULL<<--unless condition="columnIte.isLast()"-->>,<<==unless==>>
+<<--foreach iterator="columnIte" item="column" items="table.columns.values"-->>
+    <<--get key="#toUpperCase(#toSnakeCase(#fromSnakeCase(column.name)))"-->> <<--include path="'mysql-column.katip'"-->> <<--unless condition="column.nullable"-->>NOT <<==unless==>>NULL<<--unless condition="columnIte.last"-->>,<<==unless==>>
 
 <<==foreach==>>
-<<--if condition="not(table.getPrimaryKey().isEmpty())"-->>
+<<--if condition="!table.primaryKey.empty"-->>
     ,
-    PRIMARY KEY(<<--foreach iterator="primaryColIte" items="table.getPrimaryKey()"-->><<--unless condition="primaryColIte.isFirst()"-->>, <<==unless==>><<--get key="toUpperCase(toSnakeCase(fromSnakeCase(table.getColumns().get(primaryColIte.getItem()).getName())))"-->><<==foreach==>>)
+    PRIMARY KEY(<<--foreach iterator="primaryColIte" items="table.primaryKey"-->><<--unless condition="primaryColIte.first"-->>, <<==unless==>><<--get key="#toUpperCase(#toSnakeCase(#fromSnakeCase(table.columns[primaryColIte.item].name)))"-->><<==foreach==>>)
 <<==if==>>
 ) ENGINE=INNODB;
 
-<<--foreach item="index" items="table.getIndexes().values()"-->>
-<<--if condition="index.isReal()"-->>
-<<--set key="indexName" value="toUpperCase(toSnakeCase(fromSnakeCase(index.getName())))"-->>
-CREATE <<--if condition="index.isUnique()"-->>UNIQUE <<==if==>>INDEX <<--get key="indexName"-->> ON <<--get key="tableName"-->>
-(<<--foreach iterator="indexColIte" items="index.getColumns()"-->><<--get key="toUpperCase(toSnakeCase(fromSnakeCase(table.getColumns().get(indexColIte.getItem()).getName())))"-->><<--unless condition="indexColIte.isLast()"-->>, <<==unless==>><<==foreach==>>);
+<<--foreach item="index" items="table.indexes.values"-->>
+<<--if condition="index.real"-->>
+<<--set key="indexName" value="#toUpperCase(#toSnakeCase(#fromSnakeCase(index.name)))"-->>
+CREATE <<--if condition="index.unique"-->>UNIQUE <<==if==>>INDEX <<--get key="indexName"-->> ON <<--get key="tableName"-->>
+(<<--foreach iterator="indexColIte" items="index.columns"-->><<--get key="#toUpperCase(#toSnakeCase(#fromSnakeCase(table.columns[indexColIte.item].name)))"-->><<--unless condition="indexColIte.last"-->>, <<==unless==>><<==foreach==>>);
 <<==if==>>
 <<==foreach==>>
 
-<<--foreach item="foreignKey" items="table.getForeignKeys().values()"-->>
-<<--if condition="foreignKey.isReal()"-->>
-<<--set key="foreignKeyName" value="toUpperCase(toSnakeCase(fromSnakeCase(foreignKey.getName())))"-->>
-<<--set key="referenceTable" value="schema.getTables().get(foreignKey.getReferenceTable())"-->>
+<<--foreach item="foreignKey" items="table.foreignKeys.values"-->>
+<<--if condition="foreignKey.real"-->>
+<<--set key="foreignKeyName" value="#toUpperCase(#toSnakeCase(#fromSnakeCase(foreignKey.name)))"-->>
+<<--set key="referenceTable" value="schema.tables[foreignKey.referenceTable]"-->>
 ALTER TABLE <<--get key="tableName"-->> ADD CONSTRAINT <<--get key="foreignKeyName"-->>
- FOREIGN KEY (<<--foreach iterator="foreignKeyColumnIte" items="foreignKey.getColumns().entrySet()"-->><<--get key="toUpperCase(toSnakeCase(fromSnakeCase(table.getColumns().get(foreignKeyColumnIte.getItem().getKey()).getName())))"-->><<--unless condition="foreignKeyColumnIte.isLast()"-->>, <<==unless==>><<==foreach==>>
-) REFERENCES <<--get key="toUpperCase(toSnakeCase(fromSnakeCase(referenceTable.getName())))"-->>
-(<<--foreach iterator="foreignKeyColumnIte" items="foreignKey.getColumns().entrySet()"-->><<--get key="toUpperCase(toSnakeCase(fromSnakeCase(referenceTable.getColumns().get(foreignKeyColumnIte.getItem().getValue()).getName())))"-->><<--unless condition="foreignKeyColumnIte.isLast()"-->>, <<==unless==>><<==foreach==>>
+ FOREIGN KEY (<<--foreach iterator="foreignKeyColumnIte" items="foreignKey.columns.entrySet"-->><<--get key="#toUpperCase(#toSnakeCase(#fromSnakeCase(table.columns[foreignKeyColumnIte.item.key].name)))"-->><<--unless condition="foreignKeyColumnIte.last"-->>, <<==unless==>><<==foreach==>>
+) REFERENCES <<--get key="#toUpperCase(#toSnakeCase(#fromSnakeCase(referenceTable.name)))"-->>
+(<<--foreach iterator="foreignKeyColumnIte" items="foreignKey.columns.entrySet"-->><<--get key="#toUpperCase(#toSnakeCase(#fromSnakeCase(referenceTable.columns[foreignKeyColumnIte.item.value].name)))"-->><<--unless condition="foreignKeyColumnIte.isLast()"-->>, <<==unless==>><<==foreach==>>
 );
 <<==if==>>
 <<==foreach==>>
+
+
 
 <<==foreach==>><<//table
 <<==file==>>

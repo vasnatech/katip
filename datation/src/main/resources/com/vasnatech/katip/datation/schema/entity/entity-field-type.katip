@@ -1,18 +1,18 @@
-<<--set key="columnTypeName" value="column.getType().name()"-->>
-<<--if condition="eq('CHAR',columnTypeName)"-->><<--if condition="eq(1,column.getLength())"-->>character<<==if==>><<--if condition="lt(1,column.getLength())"-->>string<<==if==>><<==if==>>
-<<--if condition="eq('VARCHAR',columnTypeName)"-->><<--if condition="eq(1,column.getLength())"-->>character<<==if==>><<--if condition="lt(1,column.getLength())"-->>string<<==if==>><<==if==>>
-<<--if condition="eq('BOOL',columnTypeName)"-->>boolean<<==if==>>
-<<--if condition="eq('BYTE',columnTypeName)"-->>byte<<==if==>>
-<<--if condition="eq('INT16',columnTypeName)"-->>int16<<==if==>>
-<<--if condition="eq('INT32',columnTypeName)"-->>int32<<==if==>>
-<<--if condition="eq('INT64',columnTypeName)"-->>int64<<==if==>>
-<<--if condition="eq('INTEGER',columnTypeName)"-->>integer<<==if==>>
-<<--if condition="eq('FLOAT',columnTypeName)"-->>float<<==if==>>
-<<--if condition="eq('DOUBLE',columnTypeName)"-->>double<<==if==>>
-<<--if condition="eq('DECIMAL',columnTypeName)"-->>decimal<<==if==>>
-<<--if condition="eq('DATE',columnTypeName)"-->>date<<==if==>>
-<<--if condition="eq('TIME',columnTypeName)"-->>time<<==if==>>
-<<--if condition="eq('DATETIME',columnTypeName)"-->>datetime<<==if==>>
-<<--if condition="eq('TIMESTAMP',columnTypeName)"-->>instant<<==if==>>
-<<--if condition="eq('BLOB',columnTypeName)"-->>byte_array<<==if==>>
-<<--if condition="eq('CLOB',columnTypeName)"-->>char_array<<==if==>>
+<<--set key="columnTypeName" value="column.type.name"-->>
+<<--if condition="'CHAR'==columnTypeName"-->><<--if condition="column.length==1"-->>character<<==if==>><<--if condition="column.length>1"-->>string<<==if==>><<==if==>>
+<<--if condition="'VARCHAR'==columnTypeName"-->><<--if condition="column.length==1"-->>character<<==if==>><<--if condition="column.length>1"-->>string<<==if==>><<==if==>>
+<<--if condition="'BOOL'==columnTypeName"-->>boolean<<==if==>>
+<<--if condition="'BYTE'==columnTypeName"-->>byte<<==if==>>
+<<--if condition="'INT16'==columnTypeName"-->>int16<<==if==>>
+<<--if condition="'INT32'==columnTypeName"-->>int32<<==if==>>
+<<--if condition="'INT64'==columnTypeName"-->>int64<<==if==>>
+<<--if condition="'INTEGER'==columnTypeName"-->>integer<<==if==>>
+<<--if condition="'FLOAT'==columnTypeName"-->>float<<==if==>>
+<<--if condition="'DOUBLE'==columnTypeName"-->>double<<==if==>>
+<<--if condition="'DECIMAL'==columnTypeName"-->>decimal<<==if==>>
+<<--if condition="'DATE'==columnTypeName"-->>date<<==if==>>
+<<--if condition="'TIME'==columnTypeName"-->>time<<==if==>>
+<<--if condition="'DATETIME'==columnTypeName"-->>datetime<<==if==>>
+<<--if condition="'TIMESTAMP'==columnTypeName"-->>instant<<==if==>>
+<<--if condition="'BLOB'==columnTypeName"-->>byte_array<<==if==>>
+<<--if condition="'CLOB'==columnTypeName"-->>char_array<<==if==>>

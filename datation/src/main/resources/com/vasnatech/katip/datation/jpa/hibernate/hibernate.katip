@@ -1,9 +1,9 @@
-<<--foreach item="schema" items="schemas.getSchemas().values()"-->>
-<<--set key="schemaPackage" value="concat(package,'.',toLowerCase(schema.getName()))"-->>
-<<--foreach item="entity" items="schema.getEntities().values()"-->>
-<<--set key="tableName" value="toUpperCase(toSnakeCase(fromSnakeCase(entity.getDDL().getTable())))"-->>
-<<--set key="className" value="toPascalCase(fromCamelCase(entity.getName()))"-->>
-<<--set key="filePath" value="concat(replace(schemaPackage,'.','/'),'/',className,'.java')"-->>
+<<--foreach item="schema" items="schemas.schemas.values"-->>
+<<--set key="schemaPackage" value="#concat(package,'.',#toLowerCase(schema.name))"-->>
+<<--foreach item="entity" items="schema.entities.values"-->>
+<<--set key="tableName" value="#toUpperCase(#toSnakeCase(#fromSnakeCase(entity.getDDL().table)))"-->>
+<<--set key="className" value="#toPascalCase(#fromCamelCase(entity.name))"-->>
+<<--set key="filePath" value="#concat(#replace(schemaPackage,'.','/'),'/',className,'.java')"-->>
 <<--file path="filePath"-->>
 package <<--get key="schemaPackage"-->>;
 
@@ -12,46 +12,46 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "<<--get key="tableName"-->>")
 <<--set key="isBaseClass" value="false"-->>
-<<--foreach item="otherEntity" items="schema.getEntities().values()"-->>
-<<--if condition="eq(className,otherEntity.getInherits().getBase())"-->>
+<<--foreach item="otherEntity" items="schema.entities.values"-->>
+<<--if condition="className==otherEntity?.inherits?.base"-->>
 <<--set key="isBaseClass" value="true"-->>
 <<==if==>>
 <<==foreach==>>
 <<--if condition="isBaseClass"-->>
 @Inheritance(strategy = InheritanceType.JOINED)
 <<==if==>>
-<<--set key="isSubClass" value="isPresent(entity.getInherits().getBase())"-->>
-<<--if condition="and(isSubClass,not(entity.getIds().isEmpty()))"-->>
-<<--set key="ddlColumns" value="entity.getInherits().getDDL().getTable().getColumns()"-->>
-<<--if condition="eq(1,ddlColumns.size())"-->>
-<<--set key="ddlColumnName" value="first(ddlColumns.keySet())"-->>
-@AttributeOverride(name="<<--get key="toCamelCase(fromSnakeCase(ddlColumnName))"-->>", column=@Column(name="<<--get key="toUpperCase(toSnakeCase(fromSnakeCase(ddlColumnName)))"-->>"))
+<<--set key="isSubClass" value="entity.inherits?.base!=null"-->>
+<<--if condition="isSubClass && !entity.ids.empty"-->>
+<<--set key="ddlColumns" value="entity.inherits.getDDL()?.table?.columns"-->>
+<<--if condition="ddlColumns.size==1"-->>
+<<--set key="ddlColumnName" value="ddlColumns.keySet[0]"-->>
+@AttributeOverride(name="<<--get key="#toCamelCase(#fromSnakeCase(ddlColumnName))"-->>", column=@Column(name="<<--get key="#toUpperCase(#toSnakeCase(#fromSnakeCase(ddlColumnName)))"-->>"))
 <<==if==>>
-<<--if condition="lt(1,ddlColumns.size())"-->>
+<<--if condition="ddlColumns.size>1"-->>
 @AttributeOverrides({
-<<--foreach iterator="columnIte" items="ddlColumns.keySet()"-->>
-    @AttributeOverride(name="<<--get key="toCamelCase(fromSnakeCase(columnIte.getItem()))"-->>", column=@Column(name="<<--get key="toUpperCase(toSnakeCase(fromSnakeCase(columnIte.getItem())))"-->>"))<<--unless condition="columnIte.isLast()"-->>, <<==unless==>>
+<<--foreach iterator="columnIte" items="ddlColumns.keySet"-->>
+    @AttributeOverride(name="<<--get key="#toCamelCase(#fromSnakeCase(columnIte.item))"-->>", column=@Column(name="<<--get key="#toUpperCase(#toSnakeCase(#fromSnakeCase(columnIte.item)))"-->>"))<<--unless condition="columnIte.last"-->>, <<==unless==>>
 <<==foreach==>>
 })
 <<==if==>>
 <<==if==>>
-<<--if condition="lt(1,entity.getIds().size())"-->>
+<<--if condition="entity.ids.size>1"-->>
 @IdClass(<<--get key="className"-->>.<<--get key="className"-->>Id.class)
 <<==if==>>
-public class <<--get key="className"-->><<--if condition="isSubClass"-->> extends <<--get key="entity.getInherits().getBase()"-->><<==if==>> {
+public class <<--get key="className"-->><<--if condition="isSubClass"-->> extends <<--get key="entity.inherits.base"-->><<==if==>> {
 
-<<--if condition="lt(1,entity.getIds().size())"-->>
-<<--set key="idClassName" value="concat(className,'Id')"-->>
+<<--if condition="entity.ids.size>1"-->>
+<<--set key="idClassName" value="#concat(className,'Id')"-->>
     public static class <<--get key="idClassName"-->> implements java.io.Serializable {
-<<--foreach item="idColumnName" items="entity.getIds()"-->>
-        private <<--set key="field" value="entity.getFields().get(idColumnName)"-->><<--include path="'hibernate-field-type.katip'"-->> <<--get key="idColumnName"-->>;
+<<--foreach item="idColumnName" items="entity.ids"-->>
+        private <<--set key="field" value="entity.fields.get(idColumnName)"-->><<--include path="'hibernate-field-type.katip'"-->> <<--get key="idColumnName"-->>;
 <<==foreach==>>
 
         public <<--get key="idClassName"-->>() {
         }
 
-        public <<--get key="idClassName"-->>(<<--foreach iterator="idColumnNameIte" items="entity.getIds()"-->><<--set key="field" value="entity.getFields().get(idColumnNameIte.getItem())"-->><<--include path="'hibernate-field-type.katip'"-->> <<--get key="idColumnNameIte.getItem()"-->><<--unless condition="idColumnNameIte.isLast()"-->>, <<==unless==>><<==foreach==>>) {
-<<--foreach item="idColumnName" items="entity.getIds()"-->>
+        public <<--get key="idClassName"-->>(<<--foreach iterator="idColumnNameIte" items="entity.ids"-->><<--set key="field" value="entity.fields.get(idColumnNameIte.item)"-->><<--include path="'hibernate-field-type.katip'"-->> <<--get key="idColumnNameIte.item"-->><<--unless condition="idColumnNameIte.last"-->>, <<==unless==>><<==foreach==>>) {
+<<--foreach item="idColumnName" items="entity.ids"-->>
             this.<<--get key="idColumnName"-->> = <<--get key="idColumnName"-->>;
 <<==foreach==>>
         }
@@ -61,76 +61,76 @@ public class <<--get key="className"-->><<--if condition="isSubClass"-->> extend
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             <<--get key="idClassName"-->> other = (<<--get key="idClassName"-->>) o;
-            return <<--foreach iterator="idColumnNameIte" items="entity.getIds()"-->>java.util.Objects.equals(<<--get key="idColumnNameIte.getItem()"-->>, other.<<--get key="idColumnNameIte.getItem()"-->>)<<--unless condition="idColumnNameIte.isLast()"-->> && <<==unless==>><<==foreach==>>;
+            return <<--foreach iterator="idColumnNameIte" items="entity.ids"-->>java.util.Objects.equals(<<--get key="idColumnNameIte.item"-->>, other.<<--get key="idColumnNameIte.item"-->>)<<--unless condition="idColumnNameIte.last"-->> && <<==unless==>><<==foreach==>>;
         }
 
         @Override
         public int hashCode() {
-            return java.util.Objects.hash(<<--foreach iterator="idColumnNameIte" items="entity.getIds()"-->><<--get key="idColumnNameIte.getItem()"-->><<--unless condition="idColumnNameIte.isLast()"-->>, <<==unless==>><<==foreach==>>);
+            return java.util.Objects.hash(<<--foreach iterator="idColumnNameIte" items="entity.ids"-->><<--get key="idColumnNameIte.item"-->><<--unless condition="idColumnNameIte.last"-->>, <<==unless==>><<==foreach==>>);
         }
     }
-<<==if==>>
 
-<<--foreach item="field" items="entity.getFields().values()"-->>
+<<==if==>>
+<<--foreach item="field" items="entity.fields.values"-->>
 <<--set-block key="fieldType"-->><<--include path="'hibernate-field-type.katip'"-->><<==set-block==>>
-<<--set key="fieldName" value="toCamelCase(fromCamelCase(field.getName()))"-->>
-<<--set key="isIdField" value="entity.getIds().contains(field.getName())"-->>
-<<--if condition="not(and(isIdField,isSubClass))"-->>
+<<--set key="fieldName" value="#toCamelCase(#fromCamelCase(field.name))"-->>
+<<--set key="isIdField" value="entity.ids.contains(field.name)"-->>
+<<--unless condition="isIdField && isSubClass"-->>
 <<--if condition="isIdField"-->>
     @Id
 <<==if==>>
-<<--if condition="field.isEnum()"-->>
+<<--if condition="field.enum"-->>
     @Convert(converter = <<--get key="fieldType"-->>Converter.class)
 <<==if==>>
-<<--if condition="field.isSimple()"-->>
-    @Column(name="<<--get key="toUpperCase(toSnakeCase(fromSnakeCase(field.getDDL().getColumn())))"-->>")
+<<--if condition="field.simple"-->>
+    @Column(name="<<--get key="#toUpperCase(#toSnakeCase(#fromSnakeCase(field.getDDL().column)))"-->>")
 <<==if==>>
-<<--if condition="field.isRelational()"-->>
-<<--set key="ddlColumns" value="field.getDDL().getTable().getColumns()"-->>
-<<--set key="relationType" value="field.getDDL().getType().name()"-->>
-<<--set key="fetchType" value="field.getFetch().name()"-->>
-<<--if condition="eq('ONE_TO_ONE',relationType)"-->>
-    @OneToOne(cascade = CascadeType.ALL<<--if condition="eq('LAZY',fetchType)"-->>, fetch = FetchType.LAZY<<==if==>><<--if condition="eq('EAGER',fetchType)"-->>, fetch = FetchType.EAGER<<==if==>>)
+<<--if condition="field.relational"-->>
+<<--set key="ddlColumns" value="field.getDDL().table.columns"-->>
+<<--set key="relationType" value="field.getDDL().type.name"-->>
+<<--set key="fetchType" value="field.fetch.name"-->>
+<<--if condition="'ONE_TO_ONE'==relationType"-->>
+    @OneToOne(cascade = CascadeType.ALL<<--if condition="'LAZY'==fetchType"-->>, fetch = FetchType.LAZY<<==if==>><<--if condition="'EAGER'==fetchType"-->>, fetch = FetchType.EAGER<<==if==>>)
 <<==if==>>
-<<--if condition="eq('ONE_TO_MANY',relationType)"-->>
-    @OneToMany(cascade = CascadeType.ALL<<--if condition="eq('LAZY',fetchType)"-->>, fetch = FetchType.LAZY<<==if==>><<--if condition="eq('EAGER',fetchType)"-->>, fetch = FetchType.EAGER<<==if==>>)
-<<--if condition="eq(1,ddlColumns.size())"-->>
-<<--set key="ddlColumnName" value="first(ddlColumns.values())"-->>
-    @JoinColumn(name="<<--get key="toUpperCase(toSnakeCase(fromSnakeCase(ddlColumnName)))"-->>", insertable=false, updatable=false)
+<<--if condition="'ONE_TO_MANY'==relationType"-->>
+    @OneToMany(cascade = CascadeType.ALL<<--if condition="'LAZY'==fetchType"-->>, fetch = FetchType.LAZY<<==if==>><<--if condition="'EAGER'==fetchType"-->>, fetch = FetchType.EAGER<<==if==>>)
+<<--if condition="ddlColumns.size==1"-->>
+<<--set key="ddlColumnName" value="#first(ddlColumns.values)"-->>
+    @JoinColumn(name="<<--get key="#toUpperCase(#toSnakeCase(#fromSnakeCase(ddlColumnName)))"-->>", insertable=false, updatable=false)
 <<==if==>>
-<<--if condition="lt(1,ddlColumns.size())"-->>
-    @JoinColumns({<<--foreach iterator="columnsIte" items="field.getDDL().getTable().getColumns().keySet()"-->>@JoinColumn(name = "<<--get key="toUpperCase(columnsIte.getItem())"-->>", insertable=false, updatable=false)<<--unless condition="columnsIte.isLast()"-->>, <<==unless==>><<==foreach==>>})
-<<==if==>>
-<<==if==>>
-<<--if condition="eq('MANY_TO_ONE',relationType)"-->>
-    @ManyToOne(cascade = CascadeType.ALL<<--if condition="eq('LAZY',fetchType)"-->>, fetch = FetchType.LAZY<<==if==>><<--if condition="eq('EAGER',fetchType)"-->>, fetch = FetchType.EAGER<<==if==>>)
-<<--if condition="eq(1,ddlColumns.size())"-->>
-<<--set key="ddlColumnName" value="first(ddlColumns.keySet())"-->>
-    @JoinColumn(name="<<--get key="toUpperCase(toSnakeCase(fromSnakeCase(ddlColumnName)))"-->>", insertable=false, updatable=false)
-<<==if==>>
-<<--if condition="lt(1,ddlColumns.size())"-->>
-    @JoinColumns({<<--foreach iterator="columnsIte" items="field.getDDL().getTable().getColumns().keySet()"-->>@JoinColumn(name = "<<--get key="toUpperCase(columnsIte.getItem())"-->>", insertable=false, updatable=false)<<--unless condition="columnsIte.isLast()"-->>, <<==unless==>><<==foreach==>>})
+<<--if condition="ddlColumns.size>1"-->>
+    @JoinColumns({<<--foreach iterator="columnsIte" items="field.getDDL().table.columns.keySet"-->>@JoinColumn(name = "<<--get key="#toUpperCase(columnsIte.item)"-->>", insertable=false, updatable=false)<<--unless condition="columnsIte.last"-->>, <<==unless==>><<==foreach==>>})
 <<==if==>>
 <<==if==>>
-<<--if condition="eq('MANY_TO_MANY',relationType)"-->>
-    @ManyToMany(cascade = CascadeType.ALL<<--if condition="eq('LAZY',fetchType)"-->>, fetch = FetchType.LAZY<<==if==>><<--if condition="eq('EAGER',fetchType)"-->>, fetch = FetchType.EAGER<<==if==>>)
+<<--if condition="'MANY_TO_ONE'==relationType"-->>
+    @ManyToOne(cascade = CascadeType.ALL<<--if condition="'LAZY'==fetchType"-->>, fetch = FetchType.LAZY<<==if==>><<--if condition="'EAGER'==fetchType"-->>, fetch = FetchType.EAGER<<==if==>>)
+<<--if condition="ddlColumns.size==1"-->>
+<<--set key="ddlColumnName" value="#first(ddlColumns.keySet)"-->>
+    @JoinColumn(name="<<--get key="#toUpperCase(#toSnakeCase(#fromSnakeCase(ddlColumnName)))"-->>", insertable=false, updatable=false)
+<<==if==>>
+<<--if condition="ddlColumns.size>1"-->>
+    @JoinColumns({<<--foreach iterator="columnsIte" items="field.getDDL().table.columns.keySet"-->>@JoinColumn(name = "<<--get key="#toUpperCase(columnsIte.item)"-->>", insertable=false, updatable=false)<<--unless condition="columnsIte.last"-->>, <<==unless==>><<==foreach==>>})
+<<==if==>>
+<<==if==>>
+<<--if condition="'MANY_TO_MANY'==relationType"-->>
+    @ManyToMany(cascade = CascadeType.ALL<<--if condition="'LAZY'==fetchType"-->>, fetch = FetchType.LAZY<<==if==>><<--if condition="'EAGER'==fetchType"-->>, fetch = FetchType.EAGER<<==if==>>)
     @JoinTable(
-        name = "<<--get key="toUpperCase(toSnakeCase(fromSnakeCase(field.getDDL().getTable().getName())))"-->>",
-        joinColumns = {<<--foreach iterator="columnsIte" items="field.getDDL().getTable().getColumns().values()"-->>@JoinColumn(name = "<<--get key="toUpperCase(columnsIte.getItem())"-->>", insertable=false, updatable=false)<<--unless condition="columnsIte.isLast()"-->>, <<==unless==>><<==foreach==>>},
-        inverseJoinColumns = {<<--foreach iterator="columnsIte" items="field.getDDL().getInverseTable().getColumns().values()"-->>@JoinColumn(name = "<<--get key="toUpperCase(columnsIte.getItem())"-->>", insertable=false, updatable=false)<<--unless condition="columnsIte.isLast()"-->>, <<==unless==>><<==foreach==>>}
+        name = "<<--get key="#toUpperCase(#toSnakeCase(#fromSnakeCase(field.getDDL().table.name)))"-->>",
+        joinColumns = {<<--foreach iterator="columnsIte" items="field.getDDL().table.columns.values"-->>@JoinColumn(name = "<<--get key="#toUpperCase(columnsIte.item)"-->>", insertable=false, updatable=false)<<--unless condition="columnsIte.last"-->>, <<==unless==>><<==foreach==>>},
+        inverseJoinColumns = {<<--foreach iterator="columnsIte" items="field.getDDL().inverseTable.columns.values"-->>@JoinColumn(name = "<<--get key="#toUpperCase(columnsIte.item)"-->>", insertable=false, updatable=false)<<--unless condition="columnsIte.last"-->>, <<==unless==>><<==foreach==>>}
     )
 <<==if==>>
 <<==if==>>
-    private <<--get key="fieldType"-->> <<--get key="toCamelCase(fromCamelCase(field.getName()))"-->>;
-<<==if==>>
+    private <<--get key="fieldType"-->> <<--get key="#toCamelCase(#fromCamelCase(field.name))"-->>;
+<<==unless==>>
 <<==foreach==>>
 
-<<--foreach item="field" items="entity.getFields().values()"-->>
-<<--set key="isIdField" value="entity.getIds().contains(field.getName())"-->>
-<<--if condition="not(and(isIdField,isSubClass))"-->>
+<<--foreach item="field" items="entity.fields.values"-->>
+<<--set key="isIdField" value="entity.ids.contains(field.name)"-->>
+<<--unless condition="isIdField && isSubClass"-->>
 <<--set-block key="fieldType"-->><<--include path="'hibernate-field-type.katip'"-->><<==set-block==>>
-<<--set key="fieldName" value="toCamelCase(fromCamelCase(field.getName()))"-->>
-<<--set key="propertyName" value="toPascalCase(fromCamelCase(field.getName()))"-->>
+<<--set key="fieldName" value="#toCamelCase(#fromCamelCase(field.name))"-->>
+<<--set key="propertyName" value="#toPascalCase(#fromCamelCase(field.name))"-->>
     public <<--get key="fieldType"-->> get<<--get key="propertyName"-->>() {
         return <<--get key="fieldName"-->>;
     }
@@ -138,15 +138,15 @@ public class <<--get key="className"-->><<--if condition="isSubClass"-->> extend
         this.<<--get key="fieldName"-->> = <<--get key="fieldName"-->>;
     }
 
-<<==if==>>
+<<==unless==>>
 <<==foreach==>>
 
-<<--foreach item="field" items="entity.getFields().values()"-->>
-<<--if condition="field.isEnum()"-->>
-<<--set key="enumType" value="concat(toPascalCase(fromCamelCase(field.getName())),'Type')"-->>
+<<--foreach item="field" items="entity.fields.values"-->>
+<<--if condition="field.enum"-->>
+<<--set key="enumType" value="#concat(#toPascalCase(#fromCamelCase(field.name)),'Type')"-->>
     public enum <<--get key="enumType"-->> {
-<<--foreach iterator="enumEntryIte" items="field.getEnumValues().entrySet()"-->>
-        <<--get key="toUpperCase(fromSnakeCase(enumEntryIte.getItem().getKey()))"-->>("<<--get key="enumEntryIte.getItem().getValue()"-->>"),
+<<--foreach iterator="enumEntryIte" items="field.enumValues"-->>
+        <<--get key="#toUpperCase(#fromSnakeCase(enumEntryIte.item.key))"-->>("<<--get key="enumEntryIte.item.value"-->>"),
 <<==foreach==>>
         ;
         final String value;

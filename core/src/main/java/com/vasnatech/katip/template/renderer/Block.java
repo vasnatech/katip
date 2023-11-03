@@ -1,10 +1,8 @@
 package com.vasnatech.katip.template.renderer;
 
-import com.vasnatech.commons.expression.Expression;
 import com.vasnatech.katip.template.Output;
 import com.vasnatech.katip.template.document.Tag;
-
-import java.io.IOException;
+import org.springframework.expression.Expression;
 
 public class Block extends ContainerRenderer {
 
@@ -14,13 +12,13 @@ public class Block extends ContainerRenderer {
     }
 
     @Override
-    public void validate(Tag tag) throws IOException {
+    public void validate(Tag tag) throws RenderException {
         validateAllAttributesExist(tag, "key");
     }
 
     @Override
-    public void render(Tag tag, Output output, RenderContext renderContext) throws IOException {
+    public void render(Tag tag, Output output, RenderContext renderContext) throws RenderException {
         Expression keyExpr = tag.attributes().get("key");
-        keyExpr.set(tag, renderContext);
+        setValue(tag, renderContext, keyExpr, tag);
     }
 }

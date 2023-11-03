@@ -14,9 +14,21 @@
     <packaging>jar</packaging>
 
     <properties>
+        <spring.version>6.0.13</spring.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-expression</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.vasnatech</groupId>
             <artifactId>commons-resource</artifactId>
@@ -24,7 +36,17 @@
         </dependency>
         <dependency>
             <groupId>com.vasnatech</groupId>
-            <artifactId>commons-expression-default</artifactId>
+            <artifactId>commons-type</artifactId>
+            <version>${com.vasnatech.commons.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vasnatech</groupId>
+            <artifactId>commons-collection</artifactId>
+            <version>${com.vasnatech.commons.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vasnatech</groupId>
+            <artifactId>commons-text</artifactId>
             <version>${com.vasnatech.commons.version}</version>
         </dependency>
 
