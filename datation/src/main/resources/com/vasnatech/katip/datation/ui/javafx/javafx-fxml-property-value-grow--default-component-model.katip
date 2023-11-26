@@ -1,0 +1,5 @@
+<<--switch key="propertyValue"-->>
+<<--case value="0.0"-->>NEVER<<==case==>>
+<<--case value="1.0"-->>ALWAYS<<==case==>>
+<<--else-->>SOMETIMES<<==else==>>
+<<==switch==>>

@@ -4,6 +4,8 @@ import com.vasnatech.katip.template.Output;
 import com.vasnatech.katip.template.document.Tag;
 import org.springframework.expression.Expression;
 
+import java.util.Map;
+
 public class While extends ContainerRenderer {
 
     @Override
@@ -21,6 +23,7 @@ public class While extends ContainerRenderer {
         Expression condition = tag.attributes().get("condition");
         Object value = getValue(tag, renderContext, condition);
         while ( (value != null) && (!(value instanceof Boolean) || (Boolean)value) ) {
+            debug(tag, renderContext, Map.of("condition", condition.getExpressionString()));
             renderChildren(tag, output, renderContext.createSubContext());
             value = getValue(tag, renderContext, condition);
         }

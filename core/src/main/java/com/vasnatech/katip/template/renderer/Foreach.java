@@ -50,13 +50,16 @@ public class Foreach extends ContainerRenderer {
         while (iterator.hasNext()) {
             RenderContext subRendererContext = renderContext.createSubContext();
             Object item = iterator.next();
+            EnrichedItem enrichedItem = new EnrichedItem(index, index == 0, !iterator.hasNext(), item);
             if (itemExpr != null) {
                 setValue(tag, renderContext, itemExpr, item);
             }
             if (iteratorExpr != null) {
-                EnrichedItem enrichedItem = new EnrichedItem(index, index == 0, !iterator.hasNext(), item);
                 setValue(tag, renderContext, iteratorExpr, enrichedItem);
             }
+
+            debug(tag, renderContext, Map.of("item", item, "iterator", enrichedItem, "items", items == null ? "null" : items));
+
             renderChildren(tag, output, subRendererContext);
             ++index;
         }

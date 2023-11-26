@@ -1,0 +1,17 @@
+<<--set-block key="javafxComponentClassName"-->><<--include path="'javafx-fxml-component-type--default-component-model.katip'"-->><<==set-block==>>
+<<--set key="componentName" value="#last(javafxComponentClassName.split('\.'))"-->>
+<<<--get key="componentName"-->> fx:id="<<--get key="#toCamelCase(#fromKebabCase(element.name))"-->>"<<//
+<<--foreach item="propertyEntry" items="element.properties"-->>
+ <<--include path="'javafx-fxml-property-as-attribute--default-component-model.katip'"-->>
+<<==foreach==>>
+<<--foreach item="propertyEntry" items="element.containerProperties"-->>
+ <<--include path="'javafx-fxml-containerProperty-as-attribute--default-component-model.katip'"-->>
+<<==foreach==>>
+>
+<<--foreach item="propertyEntry" items="element.properties"-->>
+<<--include path="'javafx-fxml-property-as-tag--default-component-model.katip'"-->>
+<<==foreach==>>
+<<--foreach item="propertyEntry" items="element.containerProperties"-->>
+<<--include path="'javafx-fxml-containerProperty-as-tag--default-component-model.katip'"-->>
+<<==foreach==>>
+</<<--get key="componentName"-->>>

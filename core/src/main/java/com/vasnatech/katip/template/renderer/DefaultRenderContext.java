@@ -8,20 +8,23 @@ import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import java.util.Map;
+import java.util.Optional;
 
 public class DefaultRenderContext implements RenderContext {
 
     Project project;
     Scope scope;
     StandardEvaluationContext evaluationContext;
+    boolean debugEnabled;
 
-    public DefaultRenderContext(Project project, Map<String, Object> variables) {
-        this(project, new Scope(variables));
+    public DefaultRenderContext(Project project, Map<String, Object> variables, boolean debugEnabled) {
+        this(project, new Scope(variables), debugEnabled);
     }
 
-    DefaultRenderContext(Project project, Scope scope) {
+    DefaultRenderContext(Project project, Scope scope, boolean debugEnabled) {
         this.project = project;
         this.scope = scope;
+        this.debugEnabled = debugEnabled;
         this.evaluationContext = new StandardEvaluationContext(scope);
         this.evaluationContext.addPropertyAccessor(new ScopeAccessor());
         this.evaluationContext.addPropertyAccessor(new MapAccessor());
@@ -44,6 +47,11 @@ public class DefaultRenderContext implements RenderContext {
     }
 
     public RenderContext createSubContext() {
-        return new DefaultRenderContext(project, new Scope(scope()));
+        return new DefaultRenderContext(project, new Scope(scope()), debugEnabled);
+    }
+
+    @Override
+    public boolean isDebugEnabled() {
+        return debugEnabled;
     }
 }

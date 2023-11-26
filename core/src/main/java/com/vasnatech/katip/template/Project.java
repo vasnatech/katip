@@ -20,7 +20,8 @@ public record Project(
         Map<Path, Document> documents,
         Set<Document> renderDocuments,
         Path outputRoot,
-        Map<String, Object> parameters
+        Map<String, Object> parameters,
+        Map<String, Object> renderConfig
 ) implements Runnable {
 
     public Document document(String path) {
@@ -32,7 +33,7 @@ public record Project(
     }
 
     public void run() {
-        DocumentRenderer renderer = DocumentRendererFactory.instance().create(Map.of());
+        DocumentRenderer renderer = DocumentRendererFactory.instance().create(renderConfig);
         try (Output out = new Output(outputRoot)) {
             for (Document renderDocument : renderDocuments) {
                 renderer.render(
@@ -58,6 +59,7 @@ public record Project(
         Set<Path> renderPaths = new LinkedHashSet<>();
         Path outputRoot;
         Map<String, Object> parameters = new LinkedHashMap<>();
+        Map<String, Object> renderConfig = new LinkedHashMap<>();
 
         public Builder root(String root) {
             return root(Path.of(root));
@@ -123,6 +125,15 @@ public record Project(
             return this;
         }
 
+        public Builder renderConfig(Map<String, ?> renderConfig) {
+            this.renderConfig.putAll(renderConfig);
+            return this;
+        }
+        public Builder renderConfig(String key, Object value) {
+            this.renderConfig.put(key, value);
+            return this;
+        }
+
         public Builder projectTemplate(String template) {
             return ProjectTemplates.get(template).append(this);
         }
@@ -139,7 +150,7 @@ public record Project(
                 }
             }
             Set<Document> renderDocuments = renderPaths.stream().map(documents::get).collect(Collectors.toSet());
-            return new Project(root, documents, renderDocuments, outputRoot, parameters);
+            return new Project(root, documents, renderDocuments, outputRoot, parameters, renderConfig);
         }
 
         public void run() throws IOException {

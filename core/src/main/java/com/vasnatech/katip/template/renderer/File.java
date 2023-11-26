@@ -5,6 +5,7 @@ import com.vasnatech.katip.template.document.Tag;
 import org.springframework.expression.Expression;
 
 import java.io.IOException;
+import java.util.Map;
 
 public class File extends ContainerRenderer {
 
@@ -25,6 +26,7 @@ public class File extends ContainerRenderer {
         if (pathObj == null) {
             return;
         }
+        debug(tag, renderContext, Map.of("path", pathObj));
         try (Output file = output.createFile(pathObj)) {
             RenderContext subRendererContext = renderContext.createSubContext();
             renderChildren(tag, file, subRendererContext);

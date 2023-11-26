@@ -13,4 +13,6 @@ public interface RenderContext {
     EvaluationContext evaluationContext();
 
     RenderContext createSubContext();
+
+    boolean isDebugEnabled();
 }

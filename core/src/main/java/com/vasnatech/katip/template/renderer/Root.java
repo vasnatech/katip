@@ -3,6 +3,8 @@ package com.vasnatech.katip.template.renderer;
 import com.vasnatech.katip.template.Output;
 import com.vasnatech.katip.template.document.Tag;
 
+import java.util.Map;
+
 public final class Root extends ContainerRenderer {
 
     public static final Root INSTANCE = new Root();
@@ -25,6 +27,7 @@ public final class Root extends ContainerRenderer {
 
     @Override
     public void render(Tag tag, Output output, RenderContext renderContext) throws RenderException {
+        debug(tag, renderContext, Map.of());
         renderChildren(tag, output, renderContext);
     }
 }

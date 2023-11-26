@@ -1,0 +1,12 @@
+<<--set key="property" value="parentElement.type.childProperties.get(propertyEntry.key)"-->>
+<<--if condition="property"-->>
+<<--set key="propertyType" value="property.type"-->>
+<<--set key="propertyName" value="property.name"-->>
+<<--set key="propertyKey" value="propertyEntry.key"-->>
+<<--set key="propertyValue" value="propertyEntry.value"-->>
+<<--if condition="'margin' == propertyKey"-->>
+<<--unless condition="'AnchorPane' == parentComponentName"-->>
+<<<--get key="parentComponentName"-->>.margin><Insets left="<<--get key="propertyValue.left"-->>" top="<<--get key="propertyValue.top"-->>" right="<<--get key="propertyValue.right"-->>" bottom="<<--get key="propertyValue.bottom"-->>"/></<<--get key="parentComponentName"-->>.margin>
+<<==unless==>>
+<<==if==>>
+<<==if==>>

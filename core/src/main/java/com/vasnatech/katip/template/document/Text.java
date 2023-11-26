@@ -21,6 +21,16 @@ public class Text implements Part {
     }
 
     @Override
+    public Path path() {
+        return path;
+    }
+
+    @Override
+    public int line() {
+        return line;
+    }
+
+    @Override
     public void render(Output out, RenderContext renderContext) throws RenderException {
         try {
             out.append(text);

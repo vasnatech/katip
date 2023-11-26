@@ -1,0 +1,25 @@
+<<--file path="path"-->>
+<?xml version="1.0" encoding="UTF-8"?>
+
+<<--set key="queue" value="#queueOf(schema.root)"-->>
+<<--set key="elements" value="#listOf()"-->>
+<<--while condition="!queue.empty"-->>
+<<--set key="element" value="queue.poll()"-->>
+<<--exe expression="elements.add(element)"-->>
+<<--exe expression="queue.addAll(element.children.values)"-->>
+<<==while==>>
+<<--set key="javafxComponentClassNames" value="#setOf()"-->>
+<<--foreach item="element" items="elements"-->>
+<<--set-block key="javafxComponentClassName"-->><<--include path="'javafx-fxml-component-type--default-component-model.katip'"-->><<==set-block==>>
+<<--exe expression="javafxComponentClassNames.add(javafxComponentClassName)"-->>
+<<==foreach==>>
+<?import javafx.geometry.*?>
+<<--foreach item="javafxComponentClassName" items="javafxComponentClassNames"-->>
+<?import <<--get key="javafxComponentClassName"-->>?>
+<<==foreach==>>
+
+<<--set key="elementStack" value="#dequeOf()"-->>
+<<--set key="componentNameStack" value="#dequeOf()"-->>
+<<--set key="element" value="schema.root"-->>
+<<--include path="'javafx-fxml-container--default-component-model.katip'"-->>
+<<==file==>>

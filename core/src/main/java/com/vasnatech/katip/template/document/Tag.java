@@ -1,6 +1,7 @@
 package com.vasnatech.katip.template.document;
 
 import com.vasnatech.katip.template.Output;
+import com.vasnatech.katip.template.log.Log;
 import com.vasnatech.katip.template.renderer.RenderContext;
 import com.vasnatech.katip.template.renderer.RenderException;
 import com.vasnatech.katip.template.renderer.TagRenderer;
@@ -31,14 +32,15 @@ public class Tag implements Part {
 
     @Override
     public String toString() {
-        return "<" + renderer
-                + attributes.entrySet().stream()
-                    .map(entry -> entry.getKey() + "=" + entry.getValue().getExpressionString())
-                    .collect(Collectors.joining(", ", "(", ")"))
-                + children.stream()
-                    .map(Part::toString)
-                    .collect(Collectors.joining(""))
-                + renderer + ">";
+        return renderer.name() + " " + path + ":" + line;
+//        return "<" + renderer
+//                + attributes.entrySet().stream()
+//                    .map(entry -> entry.getKey() + "=" + entry.getValue().getExpressionString())
+//                    .collect(Collectors.joining(", ", "(", ")"))
+//                + children.stream()
+//                    .map(Part::toString)
+//                    .collect(Collectors.joining(""))
+//                + renderer + ">";
     }
 
     public String name() {

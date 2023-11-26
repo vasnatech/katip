@@ -1,0 +1,27 @@
+<<--exe expression="elementStack.push(element)"-->>
+<<--set-block key="javafxComponentClassName"-->><<--include path="'javafx-fxml-component-type--default-component-model.katip'"-->><<==set-block==>>
+<<--set key="componentName" value="#last(javafxComponentClassName.split('\.'))"-->>
+<<--exe expression="componentNameStack.push(componentName)"-->>
+<<<--get key="componentName"-->> fx:id="<<--get key="#toCamelCase(#fromKebabCase(element.name))"-->>"<<//
+<<--foreach item="propertyEntry" items="element.properties"-->>
+ <<--include path="'javafx-fxml-property-as-attribute--default-component-model.katip'"-->>
+<<==foreach==>>
+<<--foreach item="propertyEntry" items="element.containerProperties"-->>
+ <<--include path="'javafx-fxml-containerProperty-as-attribute--default-component-model.katip'"-->>
+<<==foreach==>>
+<<--if condition="elementStack.size() == 1"-->> xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"<<==if==>>
+>
+<<--foreach item="propertyEntry" items="element.containerProperties"-->>
+<<--include path="'javafx-fxml-containerProperty-as-tag--default-component-model.katip'"-->>
+<<==foreach==>>
+<<--foreach item="propertyEntry" items="element.properties"-->>
+<<--include path="'javafx-fxml-property-as-tag--default-component-model.katip'"-->>
+<<==foreach==>>
+<<--set key="parentElement" value="element"-->>
+<<--set key="parentComponentName" value="componentName"-->>
+<<--include path="'javafx-fxml-container-content--default-component-model.katip'"-->>
+<<--set key="element" value="elementStack.pop()"-->>
+<<--set key="parentElement" value="elementStack.peek()"-->>
+<<--set key="componentName" value="componentNameStack.pop()"-->>
+<<--set key="parentComponentName" value="componentNameStack.peek()"-->>
+</<<--get key="componentName"-->>>

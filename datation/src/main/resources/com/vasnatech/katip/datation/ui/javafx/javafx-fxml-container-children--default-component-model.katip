@@ -1,0 +1,2 @@
+<<--if condition="element.type.container"-->><<--include path="'javafx-fxml-container--default-component-model.katip'"-->><<==if==>>
+<<--unless condition="element.type.container"-->><<--include path="'javafx-fxml-control--default-component-model.katip'"-->><<==unless==>>

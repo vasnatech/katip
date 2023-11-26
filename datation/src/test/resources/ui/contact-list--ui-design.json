@@ -1,0 +1,48 @@
+{
+  "meta": {
+    "@schema-type": "ui-design",
+    "@schema-version": "1",
+    "@control-schema": "default"
+  },
+  "root::container::titled": {
+    "text": "Contact",
+    "children": {
+      "contact-list-pane::container::grid": {
+        "padding": "10,10,10,10",
+        "children": {
+          "filter::control::text-field": {
+            "prompt": "Filter",
+            "horizontal-grow": 1.0,
+            "row": 0,
+            "column": 0
+          },
+          "contact-table::container::table": {
+            "horizontal-grow": 1.0,
+            "vertical-grow": 1.0,
+            "row": 1,
+            "column": 0,
+            "margin": "0,10,0,0",
+            "children": {
+              "name::control::table-column": {
+                "text": "Full Name",
+                "sortable": true,
+                "sorting": "ASC",
+                "width": 150
+              },
+              "phone::control::table-column": {
+                "text": "Phone Number",
+                "sortable": true,
+                "width": 150
+              },
+              "address::control::table-column": {
+                "text": "Address",
+                "sortable": true,
+                "width": 250
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -4,6 +4,8 @@ import com.vasnatech.katip.template.Output;
 import com.vasnatech.katip.template.document.Tag;
 import org.springframework.expression.Expression;
 
+import java.util.Map;
+
 public class Unless extends ContainerRenderer {
 
     @Override
@@ -22,6 +24,7 @@ public class Unless extends ContainerRenderer {
         Object value = getValue(tag, renderContext, condition);
 
         if ( (value == null) || ((value instanceof Boolean) && !((Boolean)value)) ) {
+            debug(tag, renderContext, Map.of("condition", condition.getExpressionString()));
             renderChildren(tag, output, renderContext.createSubContext());
         }
     }

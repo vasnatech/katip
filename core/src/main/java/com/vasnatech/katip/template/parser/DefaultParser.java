@@ -94,6 +94,8 @@ public class DefaultParser implements Parser {
                     containers.peek().addChild(tag);
                     if (tag.isContainer()) {
                         containers.push(tag);
+                    } else {
+                        tag.validate();
                     }
                     state = 0;
                 }
@@ -115,6 +117,7 @@ public class DefaultParser implements Parser {
                     if (containers.isEmpty()) {
                         throw new ParseException(parseContext, "Unexpected end tag.");
                     }
+                    container.validate();
                     state = 0;
                 }
                 case 20 -> {
@@ -152,11 +155,15 @@ public class DefaultParser implements Parser {
 
     Tag parseTag(ParseContext parseContext, String tagText) {
         int index = tagText.indexOf(' ');
+        String tagName;
+        String tagAttributesAsText;
         if (index < 0) {
-            throw new ParseException(parseContext, "Unexpected tag " + tagText + ".");
+            tagName = tagText;
+            tagAttributesAsText = "";
+        } else {
+            tagName = tagText.substring(0, index);
+            tagAttributesAsText = tagText.substring(index + 1);
         }
-        String tagName = tagText.substring(0, index);
-        String tagAttributesAsText = tagText.substring(index + 1);
 
         TagRenderer renderer = TagRenderers.get(tagName);
         if (renderer == null) {
@@ -164,7 +171,6 @@ public class DefaultParser implements Parser {
         }
         Tag tag = new Tag(parseContext.getPath(), parseContext.getLine(), renderer);
         parseTagAttributes(parseContext, tag, tagAttributesAsText);
-        tag.validate();
         return tag;
     }
 
@@ -230,7 +236,7 @@ public class DefaultParser implements Parser {
         try {
             return expressionParser.parseExpression(expressionAsText);
         } catch (org.springframework.expression.ParseException e) {
-            throw new ParseException(parseContext, "Unable to parse expression" + expressionAsText + ". " + e.getMessage(), e);
+            throw new ParseException(parseContext, "Unable to parse expression " + expressionAsText + ". " + e.getMessage(), e);
         }
     }
 

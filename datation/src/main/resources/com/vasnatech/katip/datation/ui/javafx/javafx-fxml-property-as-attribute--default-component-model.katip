@@ -1,0 +1,42 @@
+<<--set key="property" value="element.type.properties.get(propertyEntry.key)"-->>
+<<--if condition="property"-->>
+<<--set key="propertyType" value="property.type"-->>
+<<--set key="propertyName" value="property.name"-->>
+<<--set key="propertyValue" value="propertyEntry.value"-->>
+<<--switch key="propertyName"-->>
+<<--case value="'visible'"-->>visible="<<--get key="propertyValue"-->>"<<==case==>>
+<<--case value="'enabled'"-->>disable=<<--get key="!propertyValue"-->><<==case==>>
+<<--case value="'styles'"-->><<==case==>>
+<<--case value="'prompt'"-->>promptText="<<--get key="propertyValue"-->>"<<==case==>>
+<<--case value="'text'"-->>text="<<--get key="propertyValue"-->>"<<==case==>>
+<<--case value="'editable'"-->>editable="<<--get key="propertyValue"-->>"<<==case==>>
+<<--case value="'alignment'"-->>alignment="<<--get key="propertyValue"-->>"<<==case==>>
+<<--case value="'selection'"-->><<==case==>>
+<<--case value="'selected'"-->>selected="<<--get key="propertyValue"-->>"<<==case==>>
+<<--case value="'text-alignment'"-->>textAlignment="<<--get key="propertyValue"-->>"<<==case==>>
+<<--case value="'orientation'"-->>
+<<--switch key="element.type.name"-->>
+<<--case value="'box'"-->><<==case==>>
+<<--else-->>orientation="<<--get key="propertyValue"-->>"<<==else==>>
+<<==switch==>>
+<<==case==>>
+<<--case value="'resource'"-->><<==case==>>
+<<--case value="'preserve-ratio'"-->>preserveRatio="<<--get key="propertyValue"-->>"<<==case==>>
+<<--case value="'position'"-->>
+<<--switch key="element.type.name"-->>
+<<--case value="'split'"-->>dividerPositions="<<--get key="propertyValue"-->>"<<==case==>>
+<<--case value="'progress-bar'"-->><<--unless condition="element.properties['indeterminate']"-->>progress="<<--get key="propertyValue"-->>"<<==unless==>><<==case==>>
+<<==switch==>>
+<<==case==>>
+<<--case value="'button-type'"-->><<==case==>>
+<<--case value="'group'"-->><<==case==>>
+<<--case value="'closable'"-->>closable="<<--get key="propertyValue"-->>"<<==case==>>
+<<--case value="'sortable'"-->>sortable="<<--get key="propertyValue"-->>"<<==case==>>
+<<--case value="'sorting'"-->>
+<<--switch key="propertyValue"-->>
+<<--case value="'ASC'"-->>sortType="ASCENDING"<<==case==>>
+<<--case value="'DESC'"-->>sortType="DESCENDING"<<==case==>>
+<<==switch==>>
+<<==case==>>
+<<==switch==>>
+<<==if==>>

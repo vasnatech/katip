@@ -1,13 +1,13 @@
 package com.vasnatech.katip.maven.plugin;
 
 import com.vasnatech.commons.reflection.ReflectionUtil;
+import com.vasnatech.commons.schema.Module;
+import com.vasnatech.commons.schema.Modules;
+import com.vasnatech.commons.schema.load.SchemaLoader;
+import com.vasnatech.commons.schema.load.SchemaLoaderFactories;
+import com.vasnatech.commons.schema.load.SchemaLoaderFactory;
+import com.vasnatech.commons.schema.schema.Schema;
 import com.vasnatech.commons.serialize.MediaTypes;
-import com.vasnatech.datation.Module;
-import com.vasnatech.datation.Modules;
-import com.vasnatech.datation.load.SchemaLoader;
-import com.vasnatech.datation.load.SchemaLoaderFactories;
-import com.vasnatech.datation.load.SchemaLoaderFactory;
-import com.vasnatech.datation.schema.Schema;
 import com.vasnatech.katip.template.ProjectTemplate;
 import com.vasnatech.katip.template.ProjectTemplates;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;

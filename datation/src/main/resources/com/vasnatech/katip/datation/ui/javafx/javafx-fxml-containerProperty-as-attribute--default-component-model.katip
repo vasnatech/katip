@@ -1,0 +1,35 @@
+<<--set key="property" value="parentElement.type.childProperties.get(propertyEntry.key)"-->>
+<<--if condition="property"-->>
+<<--set key="propertyType" value="property.type"-->>
+<<--set key="propertyName" value="property.name"-->>
+<<--set key="propertyValue" value="propertyEntry.value"-->>
+<<--switch key="propertyName"-->>
+<<--case value="'alignment'"-->>
+<<--switch key="parentComponentName"-->>
+<<--case value="'GridPane'"-->>GridPane.valignment="<<--include path="'javafx-fxml-property-value-alignment-vertical--default-component-model.katip'"-->>" GridPane.halignment="<<--include path="'javafx-fxml-property-value-alignment-horizontal--default-component-model.katip'"-->>"<<==case==>>
+<<--else-->><<--get key="parentComponentName"-->>.alignment="<<--get key="propertyValue"-->>"<<==else==>>
+<<==switch==>>
+<<==case==>>
+<<--case value="'row'"-->><<--get key="parentComponentName"-->>.rowIndex="<<--get key="propertyValue"-->>"<<==case==>>
+<<--case value="'column'"-->><<--get key="parentComponentName"-->>.columnIndex="<<--get key="propertyValue"-->>"<<==case==>>
+<<--case value="'row-span'"-->><<--get key="parentComponentName"-->>.rowSpan="<<--get key="propertyValue"-->>"<<==case==>>
+<<--case value="'column-span'"-->><<--get key="parentComponentName"-->>.columnSpan="<<--get key="propertyValue"-->>"<<==case==>>
+<<--case value="'horizontal-grow'"-->><<--get key="parentComponentName"-->>.hgrow="<<--include path="'javafx-fxml-property-value-grow--default-component-model.katip'"-->>"<<==case==>>
+<<--case value="'vertical-grow'"-->><<--get key="parentComponentName"-->>.vgrow="<<--include path="'javafx-fxml-property-value-grow--default-component-model.katip'"-->>"<<==case==>>
+<<--case value="'grow'"-->>
+<<--switch key="parentComponentName"-->>
+<<--case value="'VBox'"-->>VBox.vgrow="<<--include path="'javafx-fxml-property-value-grow--default-component-model.katip'"-->>"<<==case==>>
+<<--case value="'HBox'"-->>HBox.hgrow="<<--include path="'javafx-fxml-property-value-grow--default-component-model.katip'"-->>"<<==case==>>
+<<==switch==>>
+<<==case==>>
+<<--case value="'bounds'"-->>layoutX="<<--get key="propertyValue.x"-->>" layoutY="<<--get key="propertyValue.y"-->>" prefHeight="<<--get key="propertyValue.height"-->>" prefWidth="<<--get key="propertyValue.width"-->>"<<==case==>>
+<<--case value="'size'"-->>prefHeight="<<--get key="propertyValue.height"-->>" prefWidth="<<--get key="propertyValue.width"-->>"<<==case==>>
+<<--case value="'selected'"-->><<==case==>>
+<<--case value="'closable'"-->>closable="<<--get key="propertyValue"-->>"<<==case==>>
+<<--case value="'margin'"-->>
+<<--if condition="'AnchorPane' == parentComponentName"-->>AnchorPane.leftAnchor="<<--get key="propertyValue.left"-->>" AnchorPane.topAnchor="<<--get key="propertyValue.top"-->>" AnchorPane.rightAnchor="<<--get key="propertyValue.right"-->>" AnchorPane.bottomAnchor="<<--get key="propertyValue.bottom"-->>"<<==if==>>
+<<==case==>>
+<<--case value="'width'"-->>prefWidth="<<--get key="propertyValue"-->>"<<==case==>>
+<<--case value="'height'"-->>prefHeight="<<--get key="propertyValue"-->>"<<==case==>>
+<<==switch==>>
+<<==if==>>

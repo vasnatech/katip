@@ -1,0 +1,12 @@
+<<--switch key="propertyValue"-->>
+<<--case value="TOP_LEFT"-->>TOP<<==case==>>
+<<--case value="TOP_CENTER"-->>TOP<<==case==>>
+<<--case value="TOP_RIGHT"-->>TOP<<==case==>>
+<<--case value="CENTER_LEFT"-->>CENTER<<==case==>>
+<<--case value="CENTER_CENTER"-->>CENTER<<==case==>>
+<<--case value="CENTER_RIGHT"-->>CENTER<<==case==>>
+<<--case value="BOTTOM_LEFT"-->>BOTTOM<<==case==>>
+<<--case value="BOTTOM_CENTER"-->>BOTTOM<<==case==>>
+<<--case value="BOTTOM_RIGHT"-->>BOTTOM<<==case==>>
+<<--else-->>CENTER<<==else==>>
+<<==switch==>>

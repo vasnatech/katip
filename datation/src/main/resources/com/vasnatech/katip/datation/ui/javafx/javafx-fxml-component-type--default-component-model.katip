@@ -1,0 +1,38 @@
+<<--switch key="element.type.name"-->>
+<<--case value="'label'"-->>javafx.scene.control.Label<<==case==>>
+<<--case value="'text-field'"-->>
+<<--switch key="element.properties['multiline']"-->>
+<<--case value="true"-->>javafx.scene.control.TextArea<<==case==>>
+<<--else-->>javafx.scene.control.TextField<<==else==>>
+<<==switch==>>
+<<==case==>>
+<<--case value="'password-field'"-->>javafx.scene.control.PasswordField<<==case==>>
+<<--case value="'combo-box'"-->>javafx.scene.control.ComboBox<<==case==>>
+<<--case value="'list-box'"-->>javafx.scene.control.ListView<<==case==>>
+<<--case value="'check'"-->>javafx.scene.control.CheckBox<<==case==>>
+<<--case value="'radio'"-->>javafx.scene.control.RadioButton<<==case==>>
+<<--case value="'date-picker'"-->>javafx.scene.control.DatePicker<<==case==>>
+<<--case value="'button'"-->>javafx.scene.control.Button<<==case==>>
+<<--case value="'separator'"-->>javafx.scene.control.Separator<<==case==>>
+<<--case value="'image'"-->>javafx.scene.image.ImageView<<==case==>>
+<<--case value="'progress-bar'"-->>javafx.scene.control.ProgressBar<<==case==>>
+<<--case value="'empty'"-->>javafx.scene.control.Label<<==case==>>
+<<--case value="'pane'"-->>javafx.scene.layout.Pane<<==case==>>
+<<--case value="'accordion'"-->>javafx.scene.control.Accordion<<==case==>>
+<<--case value="'anchor'"-->>javafx.scene.layout.AnchorPane<<==case==>>
+<<--case value="'border'"-->>javafx.scene.layout.BorderPane<<==case==>>
+<<--case value="'flow'"-->>javafx.scene.layout.FlowPane<<==case==>>
+<<--case value="'grid'"-->>javafx.scene.layout.GridPane<<==case==>>
+<<--case value="'box'"-->>
+<<--switch key="element.properties['orientation']"-->>
+<<--case value="'HORIZONTAL'"-->>javafx.scene.layout.HBox<<==case==>>
+<<--case value="'VERTICAL'"-->>javafx.scene.layout.VBox<<==case==>>
+<<==switch==>>
+<<==case==>>
+<<--case value="'split'"-->>javafx.scene.control.SplitPane<<==case==>>
+<<--case value="'tab'"-->>javafx.scene.control.TabPane<<==case==>>
+<<--case value="'titled'"-->>javafx.scene.control.TitledPane<<==case==>>
+<<--case value="'table'"-->>javafx.scene.control.TableView<<==case==>>
+<<--case value="'table-column'"-->>javafx.scene.control.TableColumn<<==case==>>
+<<--else-->>unknown-type-of-<<--get key="elementTypeName"-->><<==else==>>
+<<==switch==>>

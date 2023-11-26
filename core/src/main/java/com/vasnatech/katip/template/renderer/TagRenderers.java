@@ -33,6 +33,11 @@ public final class TagRenderers {
 
         register(new If());
         register(new Unless());
+
+        register(new Switch());
+        register(new Case());
+        register(new Else());
+
         register(new Foreach());
         register(new While());
     }

@@ -1,0 +1,19 @@
+{
+  "meta": {
+    "@schema-type": "ui-design",
+    "@schema-version": "1",
+    "@control-schema": "default"
+  },
+  "root::container::flow": {
+    "children": {
+      "a::container::grid": {
+        "children": {
+          "aa::container::flow": {
+            "children": {
+            }
+          }
+        }
+      }
+    }
+  }
+}

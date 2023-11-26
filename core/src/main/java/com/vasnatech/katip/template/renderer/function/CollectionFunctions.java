@@ -6,7 +6,17 @@ import com.vasnatech.commons.type.Pair;
 import com.vasnatech.commons.type.Triple;
 
 import java.lang.reflect.Array;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
+import java.util.SortedSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -17,7 +27,19 @@ public interface CollectionFunctions {
     }
 
     static List<?> listOf(Object... objects) {
-        return Arrays.asList(objects);
+        return new ArrayList<>(List.of(objects));
+    }
+
+    static Queue<?> queueOf(Object... objects) {
+        Queue<Object> queue = new LinkedList<>();
+        Stream.of(objects).forEach(queue::offer);
+        return queue;
+    }
+
+    static Deque<?> dequeOf(Object... objects) {
+        Deque<Object> deque = new LinkedList<>();
+        Stream.of(objects).forEach(deque::push);
+        return deque;
     }
 
     static Map<?, ?> mapOf(Map.Entry<?, ?>... entries) {

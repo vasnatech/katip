@@ -1,0 +1,46 @@
+{
+  "meta": {
+    "@schema-type": "ui-design",
+    "@schema-version": "1",
+    "@control-schema": "default"
+  },
+  "root::container::titled": {
+    "text": "Contact",
+    "children": {
+      "contact::container::box": {
+        "padding": "10,10,10,10",
+        "orientation": "VERTICAL",
+        "children": {
+          "label-name::control::label": {
+            "text": "Full Name",
+            "size": "100,20"
+          },
+          "name::control::text-field": {
+            "prompt": "Name",
+            "margin": "0,0,0,0"
+          },
+          "label-phone::control::label": {
+            "text": "Phone Number",
+            "size": "100,20",
+            "margin": "0,10,0,0"
+          },
+          "phone::control::text-field": {
+            "prompt": "Phone",
+            "margin": "0,0,0,0"
+          },
+          "label-address::control::label": {
+            "text": "Address",
+            "size": "100,20",
+            "margin": "0,10,0,0"
+          },
+          "address::control::text-field": {
+            "prompt": "Address",
+            "grow": 1.0,
+            "multiline": true,
+            "margin": "0,0,0,0"
+          }
+        }
+      }
+    }
+  }
+}

@@ -3,10 +3,15 @@ package com.vasnatech.katip.template.renderer;
 import com.vasnatech.katip.template.Output;
 import com.vasnatech.katip.template.document.Part;
 import com.vasnatech.katip.template.document.Tag;
+import com.vasnatech.katip.template.log.Log;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionException;
 
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -54,7 +59,8 @@ public interface TagRenderer {
         try {
             return (T) expression.getValue(renderContext.evaluationContext());
         } catch (ExpressionException e) {
-            throw new RenderException(tag.path(), tag.line(), "Unable to get value of expression " + expression.getExpressionString() + ".", e);
+            return null;
+            //throw new RenderException(tag.path(), tag.line(), "Unable to get value of expression " + expression.getExpressionString() + ".", e);
         }
     }
 
@@ -62,7 +68,8 @@ public interface TagRenderer {
         try {
             return expression.getValue(renderContext.evaluationContext(), type);
         } catch (ExpressionException e) {
-            throw new RenderException(tag.path(), tag.line(), "Unable to get value of expression " + expression.getExpressionString() + ".", e);
+            return null;
+            //throw new RenderException(tag.path(), tag.line(), "Unable to get value of expression " + expression.getExpressionString() + ".", e);
         }
     }
 
@@ -70,7 +77,33 @@ public interface TagRenderer {
         try {
             expression.setValue(renderContext.evaluationContext(), value);
         } catch (ExpressionException e) {
-            throw new RenderException(tag.path(), tag.line(), "Unable to set value of expression " + expression.getExpressionString() + ".", e);
+            //throw new RenderException(tag.path(), tag.line(), "Unable to set value of expression " + expression.getExpressionString() + ".", e);
         }
     }
+
+    default void debug(Tag tag, RenderContext renderContext, Map<String, ?> attributeValues) {
+        if (renderContext.isDebugEnabled()) {
+            String message = attributeValues.entrySet().stream()
+                    .map(e -> e.getKey() + "=\"" + e.getValue()  + "\"")
+                    .collect(Collectors.joining(
+                            " ",
+                            StringUtils.rightPad(StringUtils.abbreviate(tag.path().toString(), 50), 50) + ":" + StringUtils.leftPad(String.valueOf(tag.line()), 3) + " <" + name() + " ",
+                            ">")
+                    );
+            Log.debug(message);
+        }
+    }
+
+//    default void debug(Tag tag, RenderContext renderContext, Map<String, ?> attributeValues) {
+//        if (renderContext.isDebugEnabled()) {
+//            String message = tag.attributes().entrySet().stream()
+//                    .map(e -> e.getKey() + "=\"" + Optional.of(e.getKey()).map(attributeValues::get).map(Objects::toString).orElse(e.getValue().getExpressionString())  + "\"")
+//                    .collect(Collectors.joining(
+//                            " ",
+//                            StringUtils.rightPad(StringUtils.abbreviate(tag.path().toString(), 50), 50) + ":" + StringUtils.leftPad(String.valueOf(tag.line()), 3) + " <" + name() + " ",
+//                            ">")
+//                    );
+//            Log.debug(message);
+//        }
+//    }
 }

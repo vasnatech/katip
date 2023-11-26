@@ -5,6 +5,7 @@ import com.vasnatech.katip.template.document.Tag;
 import org.springframework.expression.Expression;
 
 import java.io.IOException;
+import java.util.Map;
 
 public class Get extends LeafRenderer {
 
@@ -23,6 +24,7 @@ public class Get extends LeafRenderer {
         Expression keyExpr = tag.attributes().get("key");
         Object value = getValue(tag, renderContext, keyExpr);
         if (value != null) {
+            debug(tag, renderContext, Map.of(keyExpr.getExpressionString(), value));
             if (value instanceof Tag blockTag) {
                 RenderContext subRendererContext = renderContext.createSubContext();
                 renderChildren(blockTag, output, subRendererContext);

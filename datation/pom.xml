@@ -25,17 +25,17 @@
         </dependency>
         <dependency>
             <groupId>com.vasnatech</groupId>
-            <artifactId>datation-core</artifactId>
-            <version>${datation.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.vasnatech</groupId>
             <artifactId>datation-ddl</artifactId>
             <version>${datation.version}</version>
         </dependency>
         <dependency>
             <groupId>com.vasnatech</groupId>
             <artifactId>datation-entity</artifactId>
+            <version>${datation.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.vasnatech</groupId>
+            <artifactId>datation-ui</artifactId>
             <version>${datation.version}</version>
         </dependency>
 

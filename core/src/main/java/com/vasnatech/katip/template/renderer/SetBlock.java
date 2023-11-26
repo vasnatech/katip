@@ -5,6 +5,7 @@ import com.vasnatech.katip.template.document.Tag;
 import org.springframework.expression.Expression;
 
 import java.io.StringWriter;
+import java.util.Map;
 
 public class SetBlock extends ContainerRenderer {
 
@@ -24,6 +25,7 @@ public class SetBlock extends ContainerRenderer {
         StringWriter writer = new StringWriter();
         renderChildren(tag, output.create(writer), renderContext);
         Object value = writer.toString();
+        debug(tag, renderContext, Map.of("key", keyExpr.getExpressionString(), "value", value));
         setValue(tag, renderContext, keyExpr, value);
     }
 }

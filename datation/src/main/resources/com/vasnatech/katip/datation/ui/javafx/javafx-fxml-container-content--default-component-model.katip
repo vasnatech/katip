@@ -1,0 +1,96 @@
+<<--switch key="parentElement.type.name"-->>
+<<--case value="'pane'"-->>
+<children>
+<<--foreach item="element" items="parentElement.children.values"-->>
+<<--include path="'javafx-fxml-container-children--default-component-model.katip'"-->>
+<<==foreach==>>
+</children>
+<<==case==>>
+<<--case value="'accordion'"-->>
+<panes>
+<<--foreach item="element" items="parentElement.children.values"-->>
+<TitledPane text="<<--get key="element.containerProperties['text']"-->>">
+<content>
+<<--include path="'javafx-fxml-container-children--default-component-model.katip'"-->>
+</content>
+</TitledPane>
+<<==foreach==>>
+</panes>
+<<==case==>>
+<<--case value="'anchor'"-->>
+<children>
+<<--foreach item="element" items="parentElement.children.values"-->>
+<<--include path="'javafx-fxml-container-children--default-component-model.katip'"-->>
+<<==foreach==>>
+</children>
+<<==case==>>
+<<--case value="'border'"-->>
+<<--foreach item="element" items="parentElement.children.values"-->>
+<<--set-block key="componentBorderAlignment"-->>
+<<--switch key="element.containerProperties['border-alignment']"-->>
+<<--case value="'LEFT'"-->>left<<==case==>>
+<<--case value="'TOP'"-->>top<<==case==>>
+<<--case value="'RIGHT'"-->>right<<==case==>>
+<<--case value="'CENTER'"-->>center<<==case==>>
+<<--else-->>center<<==else==>>
+<<==switch==>>
+<<==set-block==>>
+<<<--get key="componentBorderAlignment"-->>>
+<<--include path="'javafx-fxml-container-children--default-component-model.katip'"-->>
+</<<--get key="componentBorderAlignment"-->>>
+<<==foreach==>>
+<<==case==>>
+<<--case value="'table'"-->>
+<columns>
+<<--foreach item="element" items="parentElement.children.values"-->>
+<<--include path="'javafx-fxml-container-children--default-component-model.katip'"-->>
+<<==foreach==>>
+</columns>
+<<==case==>>
+<<--case value="'grid'"-->>
+<children>
+<<--foreach item="element" items="parentElement.children.values"-->>
+<<--include path="'javafx-fxml-container-children--default-component-model.katip'"-->>
+<<==foreach==>>
+</children>
+<<==case==>>
+<<--case value="'box'"-->>
+<children>
+<<--foreach item="element" items="parentElement.children.values"-->>
+<<--include path="'javafx-fxml-container-children--default-component-model.katip'"-->>
+<<==foreach==>>
+</children>
+<<==case==>>
+<<--case value="'split'"-->>
+<items>
+<<--foreach item="element" items="parentElement.children.values"-->>
+<<--include path="'javafx-fxml-container-children--default-component-model.katip'"-->>
+<<==foreach==>>
+</items>
+<<==case==>>
+<<--case value="'tab'"-->>
+<tabs>
+<<--foreach item="element" items="parentElement.children.values"-->>
+<Tab closable="<<--get key="element.containerProperties['closable']"-->>" text="<<--get key="element.containerProperties['text']"-->>">
+<content>
+<<--include path="'javafx-fxml-container-children--default-component-model.katip'"-->>
+</content>
+</Tab>
+<<==foreach==>>
+</tabs>
+<<==case==>>
+<<--case value="'flow'"-->>
+<children>
+<<--foreach item="element" items="parentElement.children.values"-->>
+<<--include path="'javafx-fxml-container-children--default-component-model.katip'"-->>
+<<==foreach==>>
+</children>
+<<==case==>>
+<<--case value="'titled'"-->>
+<content>
+<<--foreach item="element" items="parentElement.children.values"-->>
+<<--include path="'javafx-fxml-container-children--default-component-model.katip'"-->>
+<<==foreach==>>
+</content>
+<<==case==>>
+<<==switch==>>

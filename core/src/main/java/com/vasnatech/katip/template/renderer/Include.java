@@ -6,6 +6,7 @@ import com.vasnatech.katip.template.document.Tag;
 import org.springframework.expression.Expression;
 
 import java.nio.file.Path;
+import java.util.Map;
 
 public class Include extends LeafRenderer {
 
@@ -27,6 +28,7 @@ public class Include extends LeafRenderer {
             Path path = Path.of(value);
             Document document = renderContext.project().documents().get(path);
             if (document != null) {
+                debug(tag, renderContext, Map.of("path", value));
                 renderChildren(document.root(), output, renderContext);
             }
         }
