@@ -15,7 +15,18 @@ public record DefaultDocumentRenderer(Map<String, ?> config) implements Document
         RenderContext renderContext = new DefaultRenderContext(
                 project,
                 parameters,
-                Optional.of("debugEnabled").map(config::get).map(Boolean.class::cast).orElse(Boolean.FALSE)
+                Optional.of("debugEnabled")
+                        .map(config::get)
+                        .map(value -> {
+                            if (value instanceof Boolean booleanValue) {
+                                return booleanValue;
+                            }
+                            if (value instanceof String stringValue) {
+                                return Boolean.valueOf(stringValue);
+                            }
+                            return null;
+                        })
+                        .orElse(Boolean.FALSE)
         );
 
         document.root().render(out, renderContext);

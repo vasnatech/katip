@@ -34,5 +34,6 @@
 <<--case value="'titled'"-->>javafx.scene.control.TitledPane<<==case==>>
 <<--case value="'table'"-->>javafx.scene.control.TableView<<==case==>>
 <<--case value="'table-column'"-->>javafx.scene.control.TableColumn<<==case==>>
+<<--case value="'tree'"-->>javafx.scene.control.TreeView<<==case==>>
 <<--else-->>unknown-type-of-<<--get key="elementTypeName"-->><<==else==>>
 <<==switch==>>

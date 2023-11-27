@@ -1,0 +1,42 @@
+{
+  "meta": {
+    "@schema-type": "ui-design",
+    "@schema-version": "1",
+    "@control-schema": "default"
+  },
+  "root::container::border": {
+    "children": {
+      "toolbar::container::flow": {
+        "border-alignment": "TOP",
+        "orientation": "HORIZONTAL",
+        "padding": "10,10,10,10",
+        "children": {
+          "new::control::button": {
+            "size": "30,30"
+          },
+          "save::control::button": {
+            "size": "30,30",
+            "margin": "10,0,0,0"
+          },
+          "delete::control::button": {
+            "size": "30,30",
+            "margin": "10,0,0,0"
+          }
+        }
+      },
+      "center::container::split": {
+        "border-alignment": "CENTER",
+        "orientation": "HORIZONTAL",
+        "position": 0.25,
+        "children": {
+          "tree::control::tree": {
+          },
+          "content::container::anchor": {
+            "children": {
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -5,6 +5,7 @@ import com.vasnatech.commons.schema.Modules;
 import com.vasnatech.commons.schema.SupportedMediaTypes;
 import com.vasnatech.commons.schema.load.SchemaLoader;
 import com.vasnatech.commons.schema.load.SchemaLoaderFactories;
+import com.vasnatech.commons.schema.schema.Schema;
 import com.vasnatech.datation.ui.design.UIDesignModule;
 import com.vasnatech.katip.datation.ui.javafx.JavaFXProjectTemplate;
 import com.vasnatech.katip.template.Project;
@@ -34,12 +35,14 @@ public class JavaFXGeneratorTest {
         Project.Builder builder = ProjectTemplates.get("ui/javafx")
                 .builder()
                 .outputRoot("./target/generated-sources/katip/fxml")
-                .renderConfig("debugEnabled", false);
+                .renderConfig("debugEnabled", true);
 
-        builder.parameter("schema", schemaLoader.load(Resources.asInputStream("ui/contact--ui-design.json"))).parameter("path", "contact.fxml").run();
-        builder.parameter("schema", schemaLoader.load(Resources.asInputStream("ui/contact-02--ui-design.json"))).parameter("path", "contact-02.fxml").run();
-        builder.parameter("schema", schemaLoader.load(Resources.asInputStream("ui/contact-list--ui-design.json"))).parameter("path", "contact-list.fxml").run();
-        builder.parameter("schema", schemaLoader.load(Resources.asInputStream("ui/contact-list-02--ui-design.json"))).parameter("path", "contact-list--02.fxml").run();
-        builder.parameter("schema", schemaLoader.load(Resources.asInputStream("ui/test-01--ui-design.json"))).parameter("path", "test-01.fxml").run();
+//        builder.parameter("schema", schemaLoader.load(Resources.asInputStream("ui/contact--ui-design.json"))).parameter("path", "contact.fxml").run();
+//        builder.parameter("schema", schemaLoader.load(Resources.asInputStream("ui/contact-02--ui-design.json"))).parameter("path", "contact-02.fxml").run();
+//        builder.parameter("schema", schemaLoader.load(Resources.asInputStream("ui/contact-list--ui-design.json"))).parameter("path", "contact-list.fxml").run();
+//        builder.parameter("schema", schemaLoader.load(Resources.asInputStream("ui/contact-list-02--ui-design.json"))).parameter("path", "contact-list--02.fxml").run();
+        Schema schema = schemaLoader.load(Resources.asInputStream("ui/main--ui-design.json"));
+        builder.parameter("schema", schema).parameter("path", "main.fxml").run();
+        //builder.parameter("schema", schemaLoader.load(Resources.asInputStream("ui/test-01--ui-design.json"))).parameter("path", "test-01.fxml").run();
     }
 }

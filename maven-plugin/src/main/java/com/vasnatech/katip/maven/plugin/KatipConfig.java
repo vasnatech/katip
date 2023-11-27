@@ -7,6 +7,7 @@ public class KatipConfig {
     String template;
     String out;
     Map<String, ?> parameters;
+    Map<String, ?> renderConfigs;
     Map<String, SchemaConfig> datationSchemas;
 
     public static class SchemaConfig {

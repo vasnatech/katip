@@ -10,8 +10,6 @@ import org.springframework.expression.ExpressionException;
 
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -93,17 +91,4 @@ public interface TagRenderer {
             Log.debug(message);
         }
     }
-
-//    default void debug(Tag tag, RenderContext renderContext, Map<String, ?> attributeValues) {
-//        if (renderContext.isDebugEnabled()) {
-//            String message = tag.attributes().entrySet().stream()
-//                    .map(e -> e.getKey() + "=\"" + Optional.of(e.getKey()).map(attributeValues::get).map(Objects::toString).orElse(e.getValue().getExpressionString())  + "\"")
-//                    .collect(Collectors.joining(
-//                            " ",
-//                            StringUtils.rightPad(StringUtils.abbreviate(tag.path().toString(), 50), 50) + ":" + StringUtils.leftPad(String.valueOf(tag.line()), 3) + " <" + name() + " ",
-//                            ">")
-//                    );
-//            Log.debug(message);
-//        }
-//    }
 }
